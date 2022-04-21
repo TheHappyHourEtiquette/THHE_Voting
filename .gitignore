@@ -1,19 +1,19 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
-/.pnp
+/client/node_modules
+/client/.pnp
 .pnp.js
 
 # testing
-/coverage
+/client/coverage
 
 # next.js
-/.next/
-/out/
+/client/.next/
+/client/out/
 
 # production
-/build
+/client/build
 
 # misc
 .DS_Store
@@ -30,3 +30,38 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+bin
+obj
+csx
+.vs
+edge
+Publish
+
+*.user
+*.suo
+*.cscfg
+*.Cache
+project.lock.json
+
+/server/packages
+/server/TestResults
+
+/server/tools/NuGet.exe
+/server/App_Data
+/server/secrets
+/server/data
+.secrets
+/server/appsettings.json
+/server/local.settings.json
+
+/server/node_modules
+/server/dist
+
+# Local python packages
+/server/.python_packages/
+
+# Azurite artifacts
+__blobstorage__
+__queuestorage__
+__azurite_db*__.json
