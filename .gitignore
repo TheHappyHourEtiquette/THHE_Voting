@@ -65,7 +65,7 @@ project.lock.json
 __blobstorage__
 __queuestorage__
 __azurite_db*__.json
-client/.next/build-manifest.json
+client/.next/*
 client/.next/package.json
 client/.next/react-loadable-manifest.json
 client/.next/trace
