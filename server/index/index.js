@@ -12,7 +12,7 @@ module.exports = async function (context, req) {
         }
         context.done()
     } catch (error) {
-        context.log.error(err);
-        context.done(err);
+        context.log.error(error);
+        context.done(error);
     }
 }

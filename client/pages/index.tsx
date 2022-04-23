@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import * as signalR from "@microsoft/signalr"
+import { useState } from 'react';
 
 /*
 let messages = document.querySelector('#messages');
@@ -17,35 +18,58 @@ let messages = document.querySelector('#messages');
       connection.start()
         .catch(console.error);
 */
-const connection = new signalR.HubConnectionBuilder()
-    .withUrl("/hub")
+
+export interface HomeProps {
+  messages: string[];
+  setMessages: (messages: string[]) => void;
+}
+
+
+
+const Home: NextPage<HomeProps> = ({messages, setMessages}: HomeProps) => {
+  
+  const connection = new signalR.HubConnectionBuilder()
+    //.withUrl("https://localhost:7071/api")
+    .withUrl("https://thhe-voting-functions.azurewebsites.net/api")
+    .configureLogging(signalR.LogLevel.Information)
     .build();
 
-    connection.on("messageReceived", (username: string, message: string) => {
-      const m = document.createElement("div");
-    
-      m.innerHTML = `<div class="message-author">${username}</div><div>${message}</div>`;
-    
-      divMessages.appendChild(m);
-      divMessages.scrollTop = divMessages.scrollHeight;
-    });
-    
-    connection.start().catch((err) => document.write(err));
-    
-    tbMessage.addEventListener("keyup", (e: KeyboardEvent) => {
-      if (e.key === "Enter") {
-        send();
-      }
-    });
-    
-    btnSend.addEventListener("click", send);
-    
-    function send() {
-      connection.send("newMessage", username, tbMessage.value)
-        .then(() => (tbMessage.value = ""));
-    }
+  const [message, setMessage] = useState<string>("");
+  const [errorText, setErrorText] = useState<string>("");
 
-const Home: NextPage = () => {
+  // setErrorText("");
+
+  connection.on("messageReceived", (username: string, receivedMessage: string) => {
+    setMessages([...messages, receivedMessage]);
+  });
+  
+  connection.start().catch((err) => {
+    setErrorText(err.message);
+  });
+
+  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    connection.send("newMessage", "kevmcdonk", message)
+        .then(() => (setMessage("")));
+
+    setMessages([...messages, message]);
+    setMessage("");
+  };
+
+  const handleKeyup = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    event.preventDefault();
+
+    if (event.key === "Enter") {
+      connection.send("newMessage", "kevmcdonk", message)
+        .then(() => (setMessage("")));
+
+      setMessages([...messages, message]);
+      setMessage("");
+    }
+    
+  };
+  
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
@@ -72,8 +96,10 @@ const Home: NextPage = () => {
         <div id="divMessages" className="messages"></div>
           <div className="input-zone">
             <label id="lblMessage" htmlFor="tbMessage">Message:</label>
-            <input id="tbMessage" className="input-zone-input" type="text" />
-            <button id="btnSend">Send</button>
+            <input className="input-zone-input" type="text" value={message} onKeyUp={handleKeyup}/>
+            
+            <button id="btnSend" onClick={handleSubmit}>Send</button>
+            <label id="lblMessage" htmlFor="tbMessage">{errorText}</label>
           </div>
         </div>
       </main>
