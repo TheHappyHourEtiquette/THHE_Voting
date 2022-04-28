@@ -112,7 +112,7 @@ const Home: NextPage<HomeProps> = ({messages, setMessages}: HomeProps) => {
           rel="noopener noreferrer"
         >
           Powered by{' '}
-          <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
+          <img src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
         </a>
       </footer>
     </div>
