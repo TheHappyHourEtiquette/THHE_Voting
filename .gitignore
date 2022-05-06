@@ -1,19 +1,19 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/client/node_modules
-/client/.pnp
+node_modules
+.pnp
 .pnp.js
 
 # testing
-/client/coverage
+coverage
 
 # next.js
-/client/.next/
-/client/out/
+.next
+out
 
 # production
-/client/build
+build
 
 # misc
 .DS_Store
@@ -44,89 +44,9 @@ Publish
 *.Cache
 project.lock.json
 
-/server/packages
-/server/TestResults
-
-/server/tools/NuGet.exe
-/server/App_Data
-/server/secrets
-/server/data
 .secrets
-/server/appsettings.json
-/server/local.settings.json
-
-/server/node_modules
-/server/dist
-
-# Local python packages
-/server/.python_packages/
 
 # Azurite artifacts
 __blobstorage__
 __queuestorage__
 __azurite_db*__.json
-client/.next/*
-client/.next/package.json
-client/.next/react-loadable-manifest.json
-client/.next/trace
-client/.next/cache/webpack/client-development/0.pack
-client/.next/cache/webpack/client-development/index.pack
-client/.next/cache/webpack/client-development/index.pack.old
-client/.next/cache/webpack/server-development/0.pack
-client/.next/cache/webpack/server-development/1.pack
-client/.next/cache/webpack/server-development/index.pack
-client/.next/cache/webpack/server-development/index.pack.old
-client/.next/server/middleware-build-manifest.js
-client/.next/server/middleware-manifest.json
-client/.next/server/middleware-react-loadable-manifest.js
-client/.next/server/pages-manifest.json
-client/.next/server/webpack-runtime.js
-client/.next/server/pages/_app.js
-client/.next/server/pages/_document.js
-client/.next/server/pages/_error.js
-client/.next/server/pages/index.js
-client/.next/static/chunks/amp.js
-client/.next/static/chunks/main.js
-client/.next/static/chunks/node_modules_next_dist_pages__error_js.js
-client/.next/static/chunks/polyfills.js
-client/.next/static/chunks/react-refresh.js
-client/.next/static/chunks/webpack.js
-client/.next/static/chunks/pages/_app.js
-client/.next/static/chunks/pages/_error.js
-client/.next/static/chunks/pages/index.js
-client/.next/static/development/_buildManifest.js
-client/.next/static/development/_middlewareManifest.js
-client/.next/static/development/_ssgManifest.js
-client/.next/static/webpack/b205f4b8723e27d9.webpack.hot-update.json
-client/.next/static/webpack/webpack.b205f4b8723e27d9.hot-update.js
-node_modules
-out/404.html
-out/favicon.ico
-out/index.html
-out/vercel.svg
-out/_next/static/buqSWj6Q26m0ORpKfe3nr/_buildManifest.js
-out/_next/static/buqSWj6Q26m0ORpKfe3nr/_middlewareManifest.js
-out/_next/static/buqSWj6Q26m0ORpKfe3nr/_ssgManifest.js
-out/_next/static/chunks/568-0b6955667b5d6ec1.js
-out/_next/static/chunks/894.9047cda612e8fce0.js
-out/_next/static/chunks/framework-00b57966872fc495.js
-out/_next/static/chunks/main-8e5fddcd8df7476c.js
-out/_next/static/chunks/polyfills-5cd94c89d3acac5f.js
-out/_next/static/chunks/webpack-060cc79c90c1cc31.js
-out/_next/static/chunks/pages/_app-fad868ac9e7d9354.js
-out/_next/static/chunks/pages/_error-427958541d1e32b7.js
-out/_next/static/chunks/pages/index-5b5bd11e69205fd4.js
-out/_next/static/css/961d584893e73074.css
-.gitignore
-server/.gitignore
-server/host.json
-server/package-lock.json
-server/package.json
-server/broadcast/function.json
-server/broadcast/index.js
-server/broadcast/readme.md
-server/content/index.html
-server/index/function.json
-server/index/index.js
-server/negotiate/function.json
-server/negotiate/index.js

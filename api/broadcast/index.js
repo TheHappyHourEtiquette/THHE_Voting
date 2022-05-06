@@ -2,6 +2,7 @@ var https = require('https');
 
 var etag = '';
 var star = 0;
+// use this to update scores regularly every 30 seconds
 
 module.exports = function (context) {
     var req = https.request("https://api.github.com/repos/azure/azure-signalr", {

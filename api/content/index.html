@@ -11,7 +11,7 @@
         .withUrl(apiBaseUrl + '/api')
         .configureLogging(signalR.LogLevel.Information)
         .build();
-      connection.on('newMessage', (message) => {
+      connection.on('messageReceived', (message) => {
         document.getElementById("messages").innerHTML = message;
       });
 

@@ -11,8 +11,12 @@ npm run build
 Then run:
 
 ```bash
-swa start out
+swa start out --api-location api
 ```
+
+*** Need to work out why running functions not working but for now run separately
+- Run Azurite in VS Code
+- func start
 
 Open [http://localhost:4280](http://localhost:4280) with your browser to see the result.
 
