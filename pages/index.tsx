@@ -14,8 +14,8 @@ import { sign } from 'crypto';
 const Home: NextPage = () => {
 
   const connection = new signalR.HubConnectionBuilder()
-    .withUrl("http://localhost:7071/api")
-    //.withUrl("https://thhe-voting-functions.azurewebsites.net/api")
+    //.withUrl("http://localhost:7071/api")
+    .withUrl("https://thhe-voting-functions.azurewebsites.net/api")
     .configureLogging(signalR.LogLevel.Information)
     .withAutomaticReconnect()
     .build();
