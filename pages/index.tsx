@@ -3,9 +3,10 @@ import Head from 'next/head'
 import Image from 'next/image'
 import * as signalR from "@microsoft/signalr"
 import { useState } from 'react';
-import {useHub} from '../utils/useHub';
-import {useClientMethod} from '../utils/useClientMethod';
-import {useHubMethod} from '../utils/useHubMethod';
+import { Show } from '../model/Show';
+import { Panellist } from '../model/Panellist';
+import { Question } from '../model/Question';
+import { DefendTheIndefensible } from '../model/DefendTheIndefensible';
 import { start } from 'repl';
 import { connect } from 'http2';
 import { sign } from 'crypto';
@@ -20,14 +21,18 @@ const Home: NextPage = () => {
     .withAutomaticReconnect()
     .build();
 
-  //TODO: close connection!
+    
 
+    let initialShow: Show = {
+      Title: "Scottish Summit 2022"
+  };
   const [messages, setMessages] = useState<string[]>([]);
   const [message, setMessage] = useState<string>("");
   const [errorText, setErrorText] = useState<string>("");
   //const { hubConnectionState, error } = useHub(connection);
   const [ hubConnectionState, setHubConnectionState ] = useState<signalR.HubConnectionState>(signalR.HubConnectionState.Disconnected);
   const [hubConnectionId, setHubConnectionId] = useState<string>("");
+  const [show, setShow] = useState<Show>();
   //const { invoke, loading } = useHubMethod(connection, "newMessage");
 
   if (hubConnectionId == "") {
@@ -150,27 +155,133 @@ async function sendMessage(message: string) {
     event.preventDefault();
   }
   
+  
+  const panellists: Panellist[] = [];
+
+  const panellistOne: Panellist = {
+    Title: "Al Eardley",
+    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/Al%20Eardley.jpg",
+    TotalScore: 0
+  };
+  panellists.push(panellistOne);
+
+  const panellistTwo: Panellist = {
+    Title: "Luise Freese",
+    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/LuiseFreese.jpg",
+    TotalScore: 0
+  };
+  panellists.push(panellistTwo);
+
+  const panellistThree: Panellist = {
+    Title: "Marijn Somers",
+    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/MarijnSomers.jpg",
+    TotalScore: 0
+  };
+  panellists.push(panellistThree);
+
+  
+  const panellistFour: Panellist = {
+    Title: "Sara Fennah",
+    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/Al%20Eardley.jpg",
+    TotalScore: 0
+  };
+  panellists.push(panellistFour);
+
+  console.log(panellists);
+  const host: Panellist = {
+    Title: "Kevin McDonnell",
+    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/KevinMcDonnell.jpg",
+    TotalScore: 0
+  };
+  
+  const questions: Question[] = [];
+  const indefensibles: DefendTheIndefensible[] = [];
+
+  initialShow = {
+      Title: "Scottish Summit 2022",
+      Host: host,
+      Panellists: panellists,
+      Questions: questions,
+      DefendTheIndefensibles: indefensibles
+  };
+  // setShow(initialShow);
+  console.log(initialShow.Panellists);
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
-        <title>Create Next App</title>
+        <title>The Happy Hour Etiquette Voting App</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
+      <main className="flex w-full flex-1 flex-col items-center justify-top px-20 text-center">
         <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
+          The Happy Hour Etiquette
         </h1>
 
         <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">
-            pages/index.tsx
-          </code>
+          Welcome to our session for {initialShow.Title}.
         </p>
+
+        <p>
+          <img src="/HappyHourEtiquette.png" alt="Cocktails as Happy Hour Etiquette logo" />
+        </p>
+
+        <h2 className="text-4xl font-bold">
+          How does it work?
+        </h2>
+
+        <p className="mt-3 text-2xl">
+          Happy Hour Etiquette helps to share the best of etiquette around Microsoft 365. Our panel will be given three questions and each person has three minutes to share their thoughts.
+        </p>
+
+        <p className="mt-3 text-2xl">
+          Every time that someone that someone makes a great point, give them a tick. Everytime that make an amazing point, give them a star. However, if there is something you do not like then you can give them a cross. Simple as that.
+        </p>
+
+        <div className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:text-center">
+              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Question One</p>
+              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">What is the behaviour that people should stop doing in Microsoft 365 (and how should they do it)?</p>
+            </div>
+
+            <div className="mt-10">
+              <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+              {
+              initialShow.Panellists.map((panellist: any) => {
+                                    
+                <div className="relative">
+                  <dt>
+                    <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                      <img src="https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/Al%20Eardley.jpg" alt="Photo of Al Eardley"/>
+                    </div>
+                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Al Eardley</p>
+                  </dt>
+                  <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-4 md:gap-x-8 md:gap-y-16">
+                    <div className="relative">  
+                    </div>
+                    <div className="relative">  
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 8192" className="svg_dd790ee3" focusable="false"><path d="M1024 0q141 0 272 36t244 104 207 160 161 207 103 245 37 272q0 141-36 272t-104 244-160 207-207 161-245 103-272 37q-141 0-272-36t-244-104-207-160-161-207-103-245-37-272q0-141 36-272t104-244 160-207 207-161T752 37t272-37zm603 685l-136-136-659 659-275-275-136 136 411 411 795-795z" className="x-hidden-focus"></path></svg>
+                    </div>
+                    <div className="relative">  
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 8192" className="svg_dd790ee3" focusable="false"><path d="M1416 1254l248 794-640-492-640 492 248-794L0 768h784L1024 0l240 768h784l-632 486z" className="x-hidden-focus"></path></svg>
+                    </div>
+                    <div className="relative">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 8192" className="svg_dd790ee3 x-hidden-focus" focusable="false"><path d="M1024 0q141 0 272 36t244 104 207 160 161 207 103 245 37 272q0 141-36 272t-104 244-160 207-207 161-245 103-272 37q-141 0-272-36t-244-104-207-160-161-207-103-245-37-272q0-141 36-272t104-244 160-207 207-161T752 37t272-37zm128 1536v-256H896v256h256zm0-384V512H896v640h256z"></path></svg>
+                    </div>
+                  </dl>
+                  <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-1 md:gap-x-8 md:gap-y-16">
+                  <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Score: {panellist.TotalScore}</p>
+                  </dl>
+                </div>
+            })
+            }
+            </dl>
+            </div>
+          </div>
+        </div>
+
 
         <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
           <div>
@@ -192,8 +303,7 @@ async function sendMessage(message: string) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
+          Powered by gin
         </a>
       </footer>
     </div>
