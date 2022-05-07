@@ -23,16 +23,31 @@ const Home: NextPage = () => {
 
     
 
-    let initialShow: Show = {
-      Title: "Scottish Summit 2022"
-  };
   const [messages, setMessages] = useState<string[]>([]);
   const [message, setMessage] = useState<string>("");
   const [errorText, setErrorText] = useState<string>("");
   //const { hubConnectionState, error } = useHub(connection);
   const [ hubConnectionState, setHubConnectionState ] = useState<signalR.HubConnectionState>(signalR.HubConnectionState.Disconnected);
   const [hubConnectionId, setHubConnectionId] = useState<string>("");
-  const [show, setShow] = useState<Show>();
+  const [show, setShow] = useState<Show>({
+    Title: "",
+    Host: {
+      Title: "",
+      ImageUrl: "",
+      TotalScore: 0
+    },
+    Panellists: [{
+      Title: "Panellist One",
+      ImageUrl: "",
+      TotalScore: 0
+    },{
+      Title: "Panellist Two",
+      ImageUrl: "",
+      TotalScore: 0
+    }],
+    Questions: [],
+    DefendTheIndefensibles: []
+  });
   //const { invoke, loading } = useHubMethod(connection, "newMessage");
 
   if (hubConnectionId == "") {
@@ -187,7 +202,6 @@ async function sendMessage(message: string) {
   };
   panellists.push(panellistFour);
 
-  console.log(panellists);
   const host: Panellist = {
     Title: "Kevin McDonnell",
     ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/KevinMcDonnell.jpg",
@@ -197,15 +211,15 @@ async function sendMessage(message: string) {
   const questions: Question[] = [];
   const indefensibles: DefendTheIndefensible[] = [];
 
-  initialShow = {
+  const initialShow = {
       Title: "Scottish Summit 2022",
       Host: host,
       Panellists: panellists,
       Questions: questions,
       DefendTheIndefensibles: indefensibles
   };
-  // setShow(initialShow);
-  console.log(initialShow.Panellists);
+  //setShow(initialShow);
+  console.log(show.Panellists);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
@@ -249,9 +263,9 @@ async function sendMessage(message: string) {
             <div className="mt-10">
               <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
               {
-              initialShow.Panellists.map((panellist: any) => {
-                                    
-                <div className="relative">
+              show.Panellists.map((panellist: any) => {
+                return (  
+                <div className="relative" key="{panellist.Title}">
                   <dt>
                     <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
                       <img src="https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/Al%20Eardley.jpg" alt="Photo of Al Eardley"/>
@@ -275,6 +289,7 @@ async function sendMessage(message: string) {
                   <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Score: {panellist.TotalScore}</p>
                   </dl>
                 </div>
+                )
             })
             }
             </dl>
