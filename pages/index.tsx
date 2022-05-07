@@ -25,7 +25,7 @@ const Home: NextPage = () => {
 
   const [messages, setMessages] = useState<string[]>([]);
   const [message, setMessage] = useState<string>("");
-  const [errorText, setErrorText] = useState<string>("");
+  const [loaded, setLoaded] = useState<Boolean>(false);
   //const { hubConnectionState, error } = useHub(connection);
   const [ hubConnectionState, setHubConnectionState ] = useState<signalR.HubConnectionState>(signalR.HubConnectionState.Disconnected);
   const [hubConnectionId, setHubConnectionId] = useState<string>("");
@@ -36,15 +36,7 @@ const Home: NextPage = () => {
       ImageUrl: "",
       TotalScore: 0
     },
-    Panellists: [{
-      Title: "Panellist One",
-      ImageUrl: "",
-      TotalScore: 0
-    },{
-      Title: "Panellist Two",
-      ImageUrl: "",
-      TotalScore: 0
-    }],
+    Panellists: [],
     Questions: [],
     DefendTheIndefensibles: []
   });
@@ -107,6 +99,71 @@ async function start() {
   }
 }
 
+async function loadShow() {
+  const panellists: Panellist[] = [];
+
+  const panellistOne: Panellist = {
+    Title: "Al Eardley",
+    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/Al%20Eardley.jpg",
+    TotalScore: 0
+  };
+  panellists.push(panellistOne);
+
+  const panellistTwo: Panellist = {
+    Title: "Luise Freese",
+    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/LuiseFreese.jpg",
+    TotalScore: 0
+  };
+  panellists.push(panellistTwo);
+
+  const panellistThree: Panellist = {
+    Title: "Marijn Somers",
+    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/MarijnSomers.jpg",
+    TotalScore: 0
+  };
+  panellists.push(panellistThree);
+
+  
+  const panellistFour: Panellist = {
+    Title: "Sara Fennah",
+    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/Al%20Eardley.jpg",
+    TotalScore: 0
+  };
+  panellists.push(panellistFour);
+
+  const host: Panellist = {
+    Title: "Kevin McDonnell",
+    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/KevinMcDonnell.jpg",
+    TotalScore: 0
+  };
+  
+  const questions: Question[] = [];
+  const indefensibles: DefendTheIndefensible[] = [];
+
+  const initialShow = {
+      Title: "Scottish Summit 2022",
+      Host: host,
+      Panellists: panellists,
+      Questions: questions,
+      DefendTheIndefensibles: indefensibles
+  };
+  
+  //setShow(initialShow);
+  if (!loaded) {
+    const res = await fetch("http://localhost:7071/api/getShow", {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    let data = await res.json() as Show;
+    console.log(data);
+    setShow(data);
+    setLoaded(true);
+  }
+}
+
 async function sendMessage(message: string) {
   try {
     const body = { message: "Azure" };
@@ -161,6 +218,7 @@ async function sendMessage(message: string) {
     }*/
 
     sendMessage("bla");
+    loadShow();
   };
   const newMessage = () => {
     console.log('a new message');
@@ -170,56 +228,8 @@ async function sendMessage(message: string) {
     event.preventDefault();
   }
   
-  
-  const panellists: Panellist[] = [];
-
-  const panellistOne: Panellist = {
-    Title: "Al Eardley",
-    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/Al%20Eardley.jpg",
-    TotalScore: 0
-  };
-  panellists.push(panellistOne);
-
-  const panellistTwo: Panellist = {
-    Title: "Luise Freese",
-    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/LuiseFreese.jpg",
-    TotalScore: 0
-  };
-  panellists.push(panellistTwo);
-
-  const panellistThree: Panellist = {
-    Title: "Marijn Somers",
-    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/MarijnSomers.jpg",
-    TotalScore: 0
-  };
-  panellists.push(panellistThree);
-
-  
-  const panellistFour: Panellist = {
-    Title: "Sara Fennah",
-    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/Al%20Eardley.jpg",
-    TotalScore: 0
-  };
-  panellists.push(panellistFour);
-
-  const host: Panellist = {
-    Title: "Kevin McDonnell",
-    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/KevinMcDonnell.jpg",
-    TotalScore: 0
-  };
-  
-  const questions: Question[] = [];
-  const indefensibles: DefendTheIndefensible[] = [];
-
-  const initialShow = {
-      Title: "Scottish Summit 2022",
-      Host: host,
-      Panellists: panellists,
-      Questions: questions,
-      DefendTheIndefensibles: indefensibles
-  };
-  //setShow(initialShow);
-  console.log(show.Panellists);
+  loadShow();
+  //console.log(show.Panellists);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
@@ -234,7 +244,7 @@ async function sendMessage(message: string) {
         </h1>
 
         <p className="mt-3 text-2xl">
-          Welcome to our session for {initialShow.Title}.
+          Welcome to our session for {show.Title}.
         </p>
 
         <p>
@@ -265,12 +275,12 @@ async function sendMessage(message: string) {
               {
               show.Panellists.map((panellist: any) => {
                 return (  
-                <div className="relative" key="{panellist.Title}">
+                <div className="relative" key={panellist.Title}>
                   <dt>
                     <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
                       <img src="https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/Al%20Eardley.jpg" alt="Photo of Al Eardley"/>
                     </div>
-                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Al Eardley</p>
+                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">{panellist.Title}</p>
                   </dt>
                   <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-4 md:gap-x-8 md:gap-y-16">
                     <div className="relative">  

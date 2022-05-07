@@ -6,9 +6,19 @@
 			"command": "host start",
 			"problemMatcher": "$func-node-watch",
 			"isBackground": true,
-			"dependsOn": "npm install (functions)",
+			"dependsOn": "npm build (functions)",
 			"options": {
-				"cwd": "${workspaceFolder}/server"
+				"cwd": "${workspaceFolder}/api2"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "npm build (functions)",
+			"command": "npm run build",
+			"dependsOn": "npm install (functions)",
+			"problemMatcher": "$tsc",
+			"options": {
+				"cwd": "${workspaceFolder}/api2"
 			}
 		},
 		{
@@ -16,16 +26,17 @@
 			"label": "npm install (functions)",
 			"command": "npm install",
 			"options": {
-				"cwd": "${workspaceFolder}/server"
+				"cwd": "${workspaceFolder}/api2"
 			}
 		},
 		{
 			"type": "shell",
 			"label": "npm prune (functions)",
 			"command": "npm prune --production",
+			"dependsOn": "npm build (functions)",
 			"problemMatcher": [],
 			"options": {
-				"cwd": "${workspaceFolder}/server"
+				"cwd": "${workspaceFolder}/api2"
 			}
 		}
 	]
