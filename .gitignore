@@ -50,3 +50,5 @@ project.lock.json
 __blobstorage__
 __queuestorage__
 __azurite_db*__.json
+api/package-lock.json
+package-lock.json
