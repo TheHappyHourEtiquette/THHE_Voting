@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build && next export",
     "buildLocal": "next build && next export && swa start out",
+    "buildFunc": "cd api && tsc",
     "start": "next start",
     "lint": "next lint"
   },
