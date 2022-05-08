@@ -34,7 +34,7 @@ jobs:
         pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/api'
         pwd
         npm install
-        npm --prefix api run build
+        npm run build
         popd
 
     - name: 'Run Azure Functions Action'
