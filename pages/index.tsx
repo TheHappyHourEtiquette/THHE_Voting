@@ -1,22 +1,20 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 import * as signalR from "@microsoft/signalr"
 import { useState } from 'react';
 import { Show } from '../model/Show';
 import { Panellist } from '../model/Panellist';
 import { Question } from '../model/Question';
 import { DefendTheIndefensible } from '../model/DefendTheIndefensible';
-import { start } from 'repl';
-import { connect } from 'http2';
-import { sign } from 'crypto';
 
 
 const Home: NextPage = () => {
+  const functionsURL = "https://thhe-voting-functions.azurewebsites.net";
+  // const functionsURL = "http://localhost:4280";
+  //const functionsURL = "http://localhost:7071";
 
   const connection = new signalR.HubConnectionBuilder()
-    //.withUrl("http://localhost:7071/api")
-    .withUrl("https://thhe-voting-functions.azurewebsites.net/api")
+    .withUrl(`${functionsURL}/api`)
     .configureLogging(signalR.LogLevel.Information)
     .withAutomaticReconnect()
     .build();
@@ -68,6 +66,20 @@ connection.on('newMessage', (messageText) => {
   setMessage('');
 });
 
+connection.on('updatedScore', (recipient, scoreChange) => {
+  console.log('Response: ' + recipient + ' ' + scoreChange + ' score change');
+  console.log('Received updated score with state as ' + connection.state);
+  /*let updatedShow = show;
+  let matchingPanellist = updatedShow.Panellists.find(p => p.Title == recipient);
+  if (matchingPanellist != null) {
+    matchingPanellist.TotalScore += scoreChange;
+  }*/
+  updateSingleScore(recipient, scoreChange).then(() => {
+    console.log("score updated");
+  });
+
+});
+
 
 connection.onclose(async () => {
   await start();
@@ -100,57 +112,9 @@ async function start() {
 }
 
 async function loadShow() {
-  const panellists: Panellist[] = [];
-
-  const panellistOne: Panellist = {
-    Title: "Al Eardley",
-    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/Al%20Eardley.jpg",
-    TotalScore: 0
-  };
-  panellists.push(panellistOne);
-
-  const panellistTwo: Panellist = {
-    Title: "Luise Freese",
-    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/LuiseFreese.jpg",
-    TotalScore: 0
-  };
-  panellists.push(panellistTwo);
-
-  const panellistThree: Panellist = {
-    Title: "Marijn Somers",
-    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/MarijnSomers.jpg",
-    TotalScore: 0
-  };
-  panellists.push(panellistThree);
-
   
-  const panellistFour: Panellist = {
-    Title: "Sara Fennah",
-    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/Al%20Eardley.jpg",
-    TotalScore: 0
-  };
-  panellists.push(panellistFour);
-
-  const host: Panellist = {
-    Title: "Kevin McDonnell",
-    ImageUrl: "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/KevinMcDonnell.jpg",
-    TotalScore: 0
-  };
-  
-  const questions: Question[] = [];
-  const indefensibles: DefendTheIndefensible[] = [];
-
-  const initialShow = {
-      Title: "Scottish Summit 2022",
-      Host: host,
-      Panellists: panellists,
-      Questions: questions,
-      DefendTheIndefensibles: indefensibles
-  };
-  
-  //setShow(initialShow);
   if (!loaded) {
-    const res = await fetch("http://localhost:7071/api/getShow", {
+    const res = await fetch(`${functionsURL}/api/getShow`, {
       method: "GET",
       mode: "cors",
       headers: {
@@ -159,6 +123,9 @@ async function loadShow() {
     });
     let data = await res.json() as Show;
     console.log(data);
+    setShow(data => {
+      return data
+    });
     setShow(data);
     setLoaded(true);
   }
@@ -167,7 +134,7 @@ async function loadShow() {
 async function sendMessage(message: string) {
   try {
     const body = { message: "Azure" };
-    const res = await fetch("http://localhost:7071/api/sendMessage", {
+    const res = await fetch(`${functionsURL}/api/sendMessage`, {
       method: "POST",
       mode: "cors",
       headers: {
@@ -177,26 +144,43 @@ async function sendMessage(message: string) {
     });
     let data = await res.text();
     console.log(data);
-  
-    /*
-    console.log("sending message");
-    if (connection.state == signalR.HubConnectionState.Disconnected) {
-      connection.start().then(()=>{
-        connection.send('newMessage', message).then(()=> {
-          console.log("It sent the message from disconnected");
-        }).catch((err) => {
-          console.log("there was an error: " + err);
-        });
-      });
-    }
-    else {
-      connection.send('newMessage', "kevmcdonk", message).then(()=> {
-        console.log("It sent the message");
-      }).catch((err) => {
-        console.log("there was an error: " + err);
-      });
-    }
-    */
+  }
+  catch(err) {
+    console.log(err);
+    setTimeout(start, 5000);
+  }
+}
+
+const sendScore = (recipient: string, scoreChange:number) => {
+  try {
+    const body = { recipient: recipient, scoreChange: scoreChange };
+    const res = fetch(`${functionsURL}/api/sendScore`, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }).then((res)=>{
+      let data = res.text();
+      console.log(data);
+    });
+  }
+  catch(err) {
+    console.log(err);
+    setTimeout(start, 5000);
+  }
+}
+
+async function updateSingleScore(recipient: string, scoreChange:number){
+  try {
+    console.log("Initial panellists")
+    console.log(show.Panellists);
+    console.log(show);
+    const updatedPanellists = show.Panellists.map(p => p.Title == recipient ? { ...p, TotalScore: (p.TotalScore+scoreChange)} : p);
+    console.log("Updated panellists")
+    console.log(updatedPanellists);
+    setShow({...show, Panellists:updatedPanellists});
   }
   catch(err) {
     console.log(err);
@@ -248,7 +232,7 @@ async function sendMessage(message: string) {
         </p>
 
         <p>
-          <img src="/HappyHourEtiquette.png" alt="Cocktails as Happy Hour Etiquette logo" />
+          <img src="/HappyHourEtiquette.png" alt="Cocktails as Happy Hour Etiquette logo" ></img>
         </p>
 
         <h2 className="text-4xl font-bold">
@@ -278,14 +262,14 @@ async function sendMessage(message: string) {
                 <div className="relative" key={panellist.Title}>
                   <dt>
                     <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                      <img src="https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/Al%20Eardley.jpg" alt="Photo of Al Eardley"/>
+                      <img src={panellist.ImageUrl} alt={panellist.Title}/>
                     </div>
                     <p className="ml-16 text-lg leading-6 font-medium text-gray-900">{panellist.Title}</p>
                   </dt>
                   <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-4 md:gap-x-8 md:gap-y-16">
                     <div className="relative">  
                     </div>
-                    <div className="relative">  
+                    <div className="relative" onClick={() => sendScore(panellist.Title,1)}>  
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 8192" className="svg_dd790ee3" focusable="false"><path d="M1024 0q141 0 272 36t244 104 207 160 161 207 103 245 37 272q0 141-36 272t-104 244-160 207-207 161-245 103-272 37q-141 0-272-36t-244-104-207-160-161-207-103-245-37-272q0-141 36-272t104-244 160-207 207-161T752 37t272-37zm603 685l-136-136-659 659-275-275-136 136 411 411 795-795z" className="x-hidden-focus"></path></svg>
                     </div>
                     <div className="relative">  
