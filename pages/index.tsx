@@ -40,26 +40,7 @@ const Home: NextPage = () => {
   });
   //const { invoke, loading } = useHubMethod(connection, "newMessage");
 
-  if (hubConnectionId == "") {
-    console.log("Not yet connected");
-    //connection.start()
-
-    start().then(() => {
-      console.log("connected: " + connection.state);
-      setHubConnectionState(signalR.HubConnectionState.Connected);
-      let connectionId = connection.connectionId;
-      if (connectionId == null) { connectionId=""};
-      setHubConnectionId(connectionId);
-    });
-  }
-  /*
-  useClientMethod(connection, "newMessage", (user, message) => {
-    console.log('Received message ' + message)
-    setMessages([...messages, message]);
-    //messages += message;
-});*/
-
-connection.on('newMessage', (messageText) => {
+  connection.on('newMessage', (messageText) => {
   console.log('Response: ' + messageText);
   console.log('Received message with state as ' + connection.state);
   setMessages(messages => [messageText, ...messages]);
@@ -74,15 +55,13 @@ connection.on('updatedScore', (recipient, scoreChange) => {
   if (matchingPanellist != null) {
     matchingPanellist.TotalScore += scoreChange;
   }*/
-  updateSingleScore(recipient, scoreChange).then(() => {
-    console.log("score updated");
-  });
+  updateSingleScore(recipient, scoreChange);
 
 });
 
 
 connection.onclose(async () => {
-  await start();
+  // await start();
 });
 
 async function start() {
@@ -202,7 +181,7 @@ async function updateSingleScore(recipient: string, scoreChange:number){
     }*/
 
     sendMessage("bla");
-    loadShow();
+    //loadShow();
   };
   const newMessage = () => {
     console.log('a new message');
@@ -211,7 +190,7 @@ async function updateSingleScore(recipient: string, scoreChange:number){
   const inputChanged = (event: React.KeyboardEvent<HTMLInputElement>) => {
     event.preventDefault();
   }
-  
+  start();
   loadShow();
   //console.log(show.Panellists);
 

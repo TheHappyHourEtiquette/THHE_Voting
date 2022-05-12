@@ -15,6 +15,15 @@
       "hubName": "serverless",
       "connectionStringSetting": "AzureSignalRConnectionString",
       "direction": "out"
-    }
+    },
+    {
+      "name": "scoreDocument",
+      "type": "cosmosDB",
+      "databaseName": "voting",
+      "collectionName": "sessions",
+      "createIfNotExists": true,
+      "connectionStringSetting": "VotingDBConnection",
+      "direction": "out"
+  }
   ]
 }
