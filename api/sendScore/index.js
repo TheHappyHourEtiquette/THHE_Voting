@@ -11,9 +11,11 @@ module.exports = function (context, req) {
         "arguments": [ recipient, scoreChange ]
     }];
 
+    const newId = uuid.v4().toString();
+    console.log(newId);
 
     context.bindings.scoreDocument = JSON.stringify({
-        id: uuid(),
+        id: newId,
         recipient: recipient,
         scoreChange: scoreChange,
         scoreTime: new Date().toString()
