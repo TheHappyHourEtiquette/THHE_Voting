@@ -11,8 +11,9 @@ module.exports = function (context, req) {
         "arguments": [ recipient, scoreChange ]
     }];
 
+
     context.bindings.scoreDocument = JSON.stringify({
-        id: uuid.toString(),
+        id: uuid(),
         recipient: recipient,
         scoreChange: scoreChange,
         scoreTime: new Date().toString()
