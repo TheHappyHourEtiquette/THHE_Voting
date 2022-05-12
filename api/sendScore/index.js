@@ -15,7 +15,7 @@ module.exports = function (context, req) {
         id: uuid,
         recipient: recipient,
         scoreChange: scoreChange,
-        scoreTime: DateTime.Now()
+        scoreTime: Date.Now()
       });
     context.done();
 }
