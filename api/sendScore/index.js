@@ -18,7 +18,8 @@ module.exports = function (context, req) {
         id: newId,
         recipient: recipient,
         scoreChange: scoreChange,
-        scoreTime: new Date().toString()
+        scoreTime: new Date().toString(),
+        itemType: "scorechange"
       });
     context.done();
 }

@@ -1,42 +1,43 @@
-var https = require('https');
-
-var etag = '';
-var star = 0;
+const uuid = require('uuid');
 // use this to update scores regularly every 30 seconds
 
 module.exports = function (context) {
-    var req = https.request("https://api.github.com/repos/azure/azure-signalr", {
-        method: 'GET',
-        headers: {'User-Agent': 'serverless', 'If-None-Match': etag}
-    }, res => {
-        if (res.headers['etag']) {
-            etag = res.headers['etag']
-        }
+  var documents = context.bindings.scoreDocuments;
+  if (context.bindings.showDocuments.length != 1) {
+    throw '';
+  }
+  var show = context.bindings.showDocuments[0];
 
-        var body = "";
+  let scores = {};
+  for (var i=0; i < show.Panellists.length; i++) {
+    scores[show.Panellists[i].Title] = 0;
+  }
 
-        res.on('data', data => {
-            body += data;
-        });
-        res.on("end", () => {
-            if (res.statusCode === 200) {
-                var jbody = JSON.parse(body);
-                star = jbody['stargazers_count'];
-            }
 
-            context.bindings.signalRMessages = [{
-                "target": "newMessage",
-                "arguments": [ `Current star count of https://github.com/Azure/azure-signalr is: ${star}` ]
-            }]
-            context.done();
-        });
-    }).on("error", (error) => {
-        context.log(error);
-        context.res = {
-          status: 500,
-          body: error
-        };
-        context.done();
-    });
-    req.end();
-}
+  for (var i = 0; i < documents.length; i++) {
+    var document = documents[i];
+    scores[document.recipient] += document.scoreChange;
+  }
+
+  for (var i=0; i < show.Panellists.length; i++) {
+    show.Panellists[i].TotalScore = scores[show.Panellists[i].Title];
+  }
+
+  context.bindings.scoreDocument = show;
+  context.bindings.signalRMessages = [
+    {
+      target: "newMessage",
+      arguments: [
+        `Current star count of https://github.com/Azure/azure-signalr is: ${star}`,
+      ],
+    },
+  ];
+
+  context.res = {
+    headers: {
+      "Content-Type": "text/html",
+    },
+    body: data,
+  };
+  context.done();
+};

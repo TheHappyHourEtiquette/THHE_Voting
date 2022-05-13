@@ -4,14 +4,42 @@
       "name": "myTimer",
       "type": "timerTrigger",
       "direction": "in",
-      "schedule": "0 0 */1 * * *"
+      "schedule": "*/30 * * * * *"
     },
     {
-      "type": "signalR",
-      "name": "signalRMessages",
-      "hubName": "serverless",
-      "connectionStringSetting": "AzureSignalRConnectionString",
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "name": "scoreDocuments",
+      "type": "cosmosDB",
+      "direction": "in",
+      "databaseName": "voting",
+      "collectionName": "sessions",
+      "sqlQuery": "SELECT * from c where c.itemType = 'scorechange'",
+      "createIfNotExists": true,
+      "connectionStringSetting": "VotingDBConnection"
+    },
+    {
+      "name": "showDocuments",
+      "type": "cosmosDB",
+      "direction": "in",
+      "databaseName": "voting",
+      "collectionName": "sessions",
+      "sqlQuery": "SELECT * from c where c.itemType = 'show'",
+      "createIfNotExists": true,
+      "connectionStringSetting": "VotingDBConnection"
+    },
+    {
+      "name": "showDocument",
+      "type": "cosmosDB",
+      "databaseName": "voting",
+      "collectionName": "sessions",
+      "createIfNotExists": true,
+      "connectionStringSetting": "VotingDBConnection",
       "direction": "out"
     }
+
   ]
 }
