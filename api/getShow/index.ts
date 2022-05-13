@@ -5,7 +5,15 @@ import { Octokit } from "@octokit/rest";
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 
 const getShow: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-    const data = {
+  
+  console.log('Show docs found: ' + context.bindings.showDocuments.length);
+  if (context.bindings.showDocuments.length != 1) {
+    throw '0 or more than 1 show docs found';
+  }
+  
+  var show = context.bindings.showDocuments[0];  
+  
+  const data = {
         Title: "Scottish Summit 2022",
         Host: {
             Title: "Kevin McDonnell",
@@ -29,7 +37,7 @@ const getShow: AzureFunction = async function (context: Context, req: HttpReques
         headers: {
             'Content-Type': 'text/html'
         },
-        body: data
+        body: show
     }
     context.done()
 

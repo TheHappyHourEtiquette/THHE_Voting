@@ -13,6 +13,16 @@
       "type": "http",
       "direction": "out",
       "name": "res"
+    },
+    {
+      "name": "showDocuments",
+      "type": "cosmosDB",
+      "direction": "in",
+      "databaseName": "voting",
+      "collectionName": "sessions",
+      "sqlQuery": "SELECT * from c where c.itemType = 'Show'",
+      "createIfNotExists": true,
+      "connectionStringSetting": "VotingDBConnection"
     }
   ],
   "scriptFile": "../dist/getShow/index.js"
