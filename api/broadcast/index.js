@@ -30,6 +30,7 @@ module.exports = function (context) {
     show.Panellists[i].TotalScore = scores[show.Panellists[i].Title];
   }
 
+  console.log(show);
   console.log("Saving show");
   context.bindings.scoreDocument = show;
   console.log("Sending out the update to client");
