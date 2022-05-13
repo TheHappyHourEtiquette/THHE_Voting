@@ -32,6 +32,7 @@ module.exports = function (context) {
 
   console.log(show);
   console.log("Saving show");
+  show.Title="UPDATED";
   context.bindings.scoreDocument = show;
   console.log("Sending out the update to client");
   context.bindings.signalRMessages = [
