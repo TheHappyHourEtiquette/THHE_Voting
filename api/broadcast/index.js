@@ -5,11 +5,12 @@ module.exports = function (context) {
   try {
   console.log('Broadcast triggered');
   var documents = context.bindings.scoreDocuments;
-  console.log('Score docs found: ' + context.bindings.scoreDocuments);
+  console.log('Score docs found: ' + context.bindings.scoreDocuments.length);
+  console.log('Show docs found: ' + context.bindings.showDocuments.length);
   if (context.bindings.showDocuments.length != 1) {
-    throw '';
+    throw '0 or more than 1 show docs found';
   }
-  console.log('Show docs found: ' + context.bindings.showDocuments);
+  
   var show = context.bindings.showDocuments[0];
 
   let scores = {};
