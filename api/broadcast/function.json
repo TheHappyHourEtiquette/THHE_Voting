@@ -27,7 +27,7 @@
       "direction": "in",
       "databaseName": "voting",
       "collectionName": "sessions",
-      "sqlQuery": "SELECT * from c where c.itemType = 'show'",
+      "sqlQuery": "SELECT * from c where c.itemType = 'Show'",
       "createIfNotExists": true,
       "connectionStringSetting": "VotingDBConnection"
     },
