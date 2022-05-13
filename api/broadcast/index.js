@@ -2,6 +2,7 @@ const uuid = require('uuid');
 // use this to update scores regularly every 30 seconds
 
 module.exports = function (context) {
+  try {
   console.log('Broadcast triggered');
   var documents = context.bindings.scoreDocuments;
   console.log('Score docs found: ' + context.bindings.scoreDocuments);
@@ -47,4 +48,9 @@ module.exports = function (context) {
     body: data,
   };
   context.done();
+  }
+  catch(exp) {
+    console.log(exp);
+    context.done();
+  }
 };
