@@ -47,7 +47,7 @@ module.exports = function (context) {
     headers: {
       "Content-Type": "text/html",
     },
-    body: data,
+    body: show,
   };
   context.done();
   }
