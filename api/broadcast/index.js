@@ -38,7 +38,7 @@ module.exports = function (context) {
     {
       target: "newMessage",
       arguments: [
-        `Current star count of https://github.com/Azure/azure-signalr is: ${star}`,
+        show,
       ],
     },
   ];
