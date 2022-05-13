@@ -30,9 +30,10 @@ module.exports = function (context) {
     show.Panellists[i].TotalScore = scores[show.Panellists[i].Title];
   }
 
+  show.Title="UPDATED";
   console.log(show);
   console.log("Saving show");
-  show.Title="UPDATED";
+  
   context.bindings.scoreDocument = show;
   console.log("Sending out the update to client");
   context.bindings.signalRMessages = [
@@ -53,7 +54,7 @@ module.exports = function (context) {
   context.done();
   }
   catch(exp) {
-    console.log(exp);
+    console.log('Error:' + exp);
     context.done();
   }
 };
