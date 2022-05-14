@@ -38,7 +38,7 @@ module.exports = function (context) {
   console.log("Sending out the update to client");
   context.bindings.signalRMessages = [
     {
-      target: "newMessage",
+      target: "showUpdate",
       arguments: [
         show,
       ],

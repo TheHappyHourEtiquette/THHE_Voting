@@ -40,11 +40,9 @@ const Home: NextPage = () => {
   });
   //const { invoke, loading } = useHubMethod(connection, "newMessage");
 
-  connection.on('newMessage', (messageText) => {
-    console.log('Response: ' + messageText);
-    console.log('Received message with state as ' + connection.state);
-    setMessages(messages => [messageText, ...messages]);
-    setMessage('');
+  connection.on('showUpdate', (showUpdate) => {
+    console.log('Show update received');
+    setShow(showUpdate);
 });
 
 connection.on('updatedScore', (recipient, scoreChange) => {
