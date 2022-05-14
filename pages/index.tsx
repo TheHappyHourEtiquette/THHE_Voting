@@ -31,14 +31,21 @@ const Home: NextPage = () => {
   const [scoreBigEffect, setScoreBigEffect] = useState(false);
   const [scoreDownEffect, setScoreDownEffect] = useState(false);
   const [scoreUpdateEffect, setScoreUpdateEffect] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState(false);
   
   const [show, setShow] = useState<Show>({
+    id: "",
     Title: "",
+    session: "",
     Host: {
       Title: "",
       ImageUrl: "",
       TotalScore: 0
     },
+    SelectedQuestion: "",
+    SelectedPanellist: "",
+    SelectedDFI: "",
+    CurrentScreen: "Home",
     Panellists: [],
     Questions: [],
     DefendTheIndefensibles: []
@@ -49,7 +56,12 @@ const Home: NextPage = () => {
     console.log('Show update received');
     setShow(showUpdate);
     setScoreUpdateEffect(true);
-});
+  });
+
+  connection.on('screenChanged', (screenName) => {
+    console.log('Show update received');
+    setCurrentScreen(screenName);
+  });
 
 connection.on('updatedScore', (recipient, scoreChange) => {
   console.log('Response: ' + recipient + ' ' + scoreChange + ' score change');
@@ -213,25 +225,35 @@ async function updateSingleScore(recipient: string, scoreChange:number){
           <img src="/HappyHourEtiquette.png" alt="Cocktails as Happy Hour Etiquette logo" ></img>
         </p>
 
-        <h2 className="text-4xl font-bold">
-          How does it work?
-        </h2>
+        {(show.CurrentScreen === 'Home') && <div>
+          <h2 className="text-4xl font-bold">
+            How does it work?
+          </h2>
 
-        <p className="mt-3 text-2xl">
-          Happy Hour Etiquette helps to share the best of etiquette around Microsoft 365. Our panel will be given three questions and each person has three minutes to share their thoughts.
-        </p>
+          <p className="mt-3 text-2xl">
+            Happy Hour Etiquette helps to share the best of etiquette around Microsoft 365. Our panel will be given three questions and each person has three minutes to share their thoughts.
+          </p>
 
-        <p className="mt-3 text-2xl">
-          Every time that someone that someone makes a great point, give them a tick. Everytime that make an amazing point, give them a star. However, if there is something you do not like then you can give them a cross. Simple as that.
-        </p>
+          <p className="mt-3 text-2xl">
+            Every time that someone that someone makes a great point, give them a tick. Everytime that make an amazing point, give them a star. However, if there is something you do not like then you can give them a cross. Simple as that.
+          </p>
+        </div>
+        }
 
+        {(show.CurrentScreen == 'Questions - voting' || show.CurrentScreen == 'Questions - summary') &&
         <div className="py-12 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:text-center">
-              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Question One</p>
+              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Question</p>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">What is the behaviour that people should stop doing in Microsoft 365 (and how should they do it)?</p>
             </div>
+          </div>
+        </div>
+        }
 
+        {(show.CurrentScreen == 'Questions - summary' || show.CurrentScreen == 'Scoreboard') && 
+        <div className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mt-10">
               <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
               {
@@ -279,6 +301,7 @@ async function updateSingleScore(recipient: string, scoreChange:number){
             </div>
           </div>
         </div>
+        }
       </main>
 
       <footer className="flex h-24 w-full items-center justify-center border-t">

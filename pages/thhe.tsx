@@ -129,10 +129,10 @@ async function sendMessage(message: string) {
   }
 }
 
-const sendScore = (recipient: string, scoreChange:number) => {
+const sendScreenChange = (screenName: string) => {
   try {
-    const body = { recipient: recipient, scoreChange: scoreChange };
-    const res = fetch(`${functionsURL}/api/sendScore`, {
+    const body = { screenName: screenName};
+    const res = fetch(`${functionsURL}/api/changeScreen`, {
       method: "POST",
       mode: "cors",
       headers: {
@@ -167,26 +167,6 @@ async function updateSingleScore(recipient: string, scoreChange:number){
   }
 }
 
-  const handleSubmit = (event: any) => {//React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    console.warn('setting message:' + event.target.name.value);
-    console.log("HandleSubmit ConnectionState: " + hubConnectionState + ", " + connection.state);
-    /* invoke("newMessage","here is the message").then(()=> {
-      console.log("something has happened: " + hubConnectionState);
-    }).catch(()=> {
-      console.log("something has failed");
-    });
-    if (!loading) {
-      console.log("Hmmm");
-    }*/
-
-    sendMessage("bla");
-    //loadShow();
-  };
-  const newMessage = () => {
-    console.log('a new message');
-  }
-
   const inputChanged = (event: React.KeyboardEvent<HTMLInputElement>) => {
     event.preventDefault();
   }
@@ -220,27 +200,27 @@ async function updateSingleScore(recipient: string, scoreChange:number){
 
         <div className="py-12 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> 
-            <div className="lg:text-center">
+            <div className="lg:text-center" onClick={() => sendScreenChange('Home')}>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
               <Icon iconName="Send" />  Home
               </p>
             </div>
-            <div className="lg:text-center">
+            <div className="lg:text-center" onClick={() => sendScreenChange('Questions - voting')}>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
               <Icon iconName="Send" />  Questions - voting
               </p>
             </div>
-            <div className="lg:text-center">
+            <div className="lg:text-center" onClick={() => sendScreenChange('Questions - summary')}>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
               <Icon iconName="Send" />  Questions - summary
               </p>
             </div>
-            <div className="lg:text-center">
+            <div className="lg:text-center" onClick={() => sendScreenChange('Scoreboard')}>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
               <Icon iconName="Send" />  Scoreboard
               </p>
             </div>
-            <div className="lg:text-center">
+            <div className="lg:text-center" onClick={() => sendScreenChange('Defend the indefensible')}>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
               <Icon iconName="Send" />  Defend the indefensible
               </p>
