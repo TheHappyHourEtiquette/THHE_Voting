@@ -29,10 +29,6 @@ module.exports = function (context) {
   for (var i=0; i < show.Panellists.length; i++) {
     show.Panellists[i].TotalScore = scores[show.Panellists[i].Title];
   }
-
-  show.Title="UPDATED";
-  console.log(show);
-  console.log("Saving show");
   
   context.bindings.showDocument = JSON.stringify(show);
   console.log("Sending out the update to client");

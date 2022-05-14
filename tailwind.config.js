@@ -14,7 +14,7 @@ module.exports = {
         animation: {
           wiggle: "wiggle 200ms ease-in-out",
           ping: "ping 400ms ease-in-out",
-          pulse: "pulse 400ms ease-in-out"
+          pulse: "pulse 700ms ease-in-out"
         }
       }
     },
