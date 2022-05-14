@@ -45,12 +45,6 @@ module.exports = function (context) {
     },
   ];
 
-  context.res = {
-    headers: {
-      "Content-Type": "text/html",
-    },
-    body: show,
-  };
   context.done();
   }
   catch(exp) {
