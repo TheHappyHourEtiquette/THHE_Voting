@@ -34,7 +34,7 @@ module.exports = function (context) {
   console.log(show);
   console.log("Saving show");
   
-  context.bindings.scoreDocument = JSON.stringify(show);
+  context.bindings.showDocument = JSON.stringify(show);
   console.log("Sending out the update to client");
   context.bindings.signalRMessages = [
     {
