@@ -41,10 +41,10 @@ const Home: NextPage = () => {
   //const { invoke, loading } = useHubMethod(connection, "newMessage");
 
   connection.on('newMessage', (messageText) => {
-  console.log('Response: ' + messageText);
-  console.log('Received message with state as ' + connection.state);
-  setMessages(messages => [messageText, ...messages]);
-  setMessage('');
+    console.log('Response: ' + messageText);
+    console.log('Received message with state as ' + connection.state);
+    setMessages(messages => [messageText, ...messages]);
+    setMessage('');
 });
 
 connection.on('updatedScore', (recipient, scoreChange) => {
@@ -67,21 +67,14 @@ connection.onclose(async () => {
 async function start() {
   try {
     await connection.start();
-    console.log("SignalR connected");
-    connection.invoke("newMessage", "kevmcdonk", "started").then(()=> {
-      console.log("It invoked");
-    }).catch((err) => {
-      console.log("there was an error: " + err);
-    })
-    ;
-    console.log("message invoked");
+    //console.log("SignalR connected");
     connection.send("newMessage", "started").then(()=> {
       console.log("It sent");
     }).catch((err) => {
-      console.log("there was an error: " + err);
+      console.log("there was a sent error: " + err);
     })
     ;
-    console.log("message sent");
+    // console.log("message sent");
     
   }
   catch(err) {

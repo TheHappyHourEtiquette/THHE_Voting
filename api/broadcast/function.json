@@ -7,9 +7,11 @@
       "schedule": "*/30 * * * * *"
     },
     {
-      "type": "http",
-      "direction": "out",
-      "name": "res"
+      "type": "signalR",
+      "name": "signalRMessages",
+      "hubName": "serverless",
+      "connectionStringSetting": "AzureSignalRConnectionString",
+      "direction": "out"
     },
     {
       "name": "scoreDocuments",
