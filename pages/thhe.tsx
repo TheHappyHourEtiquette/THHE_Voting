@@ -215,6 +215,40 @@ async function updateSingleScore(recipient: string, scoreChange:number){
         </p>
 
         <h2 className="text-4xl font-bold">
+          Screens
+        </h2>
+
+        <div className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> 
+            <div className="lg:text-center">
+              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+              <Icon iconName="Send" />  Home
+              </p>
+            </div>
+            <div className="lg:text-center">
+              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+              <Icon iconName="Send" />  Questions - voting
+              </p>
+            </div>
+            <div className="lg:text-center">
+              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+              <Icon iconName="Send" />  Questions - summary
+              </p>
+            </div>
+            <div className="lg:text-center">
+              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+              <Icon iconName="Send" />  Scoreboard
+              </p>
+            </div>
+            <div className="lg:text-center">
+              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+              <Icon iconName="Send" />  Defend the indefensible
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <h2 className="text-4xl font-bold">
           Questions
         </h2>
 

@@ -3,8 +3,8 @@ Here is some sample data
 ```
 
 {
-    "id": "00000000-0000-0000-0000-000000000000",
-    "Title": "UPDATED",
+    "id": "401f9455-463d-43ee-bb42-79ed2f67c021",
+    "Title": "Scottish Summit 2022",
     "Host": {
         "Title": "Kevin McDonnell",
         "ImageUrl": "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/KevinMcDonnell.jpg",
@@ -32,6 +32,10 @@ Here is some sample data
             "TotalScore": 0
         }
     ],
+    "SelectedQuestion":"",
+    "SelectedPanellist":"",
+    "SelectedDFI":"",
+    "CurrentScreen":"Home",
     "Questions": [
         "Which tip did you get from someone must recently do this ever since",
         "Which core ideas /beliefs do we need to manifest in corporate culture to foster good M365 etiquette",
