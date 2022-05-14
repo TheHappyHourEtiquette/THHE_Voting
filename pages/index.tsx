@@ -31,7 +31,7 @@ const Home: NextPage = () => {
   const [scoreBigEffect, setScoreBigEffect] = useState(false);
   const [scoreDownEffect, setScoreDownEffect] = useState(false);
   const [scoreUpdateEffect, setScoreUpdateEffect] = useState(false);
-  const [currentScreen, setCurrentScreen] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState<string>("Home");
   
   const [show, setShow] = useState<Show>({
     id: "",
@@ -225,7 +225,7 @@ async function updateSingleScore(recipient: string, scoreChange:number){
           <img src="/HappyHourEtiquette.png" alt="Cocktails as Happy Hour Etiquette logo" ></img>
         </p>
 
-        {(show.CurrentScreen === 'Home') && <div>
+        {(currentScreen === 'Home') && <div>
           <h2 className="text-4xl font-bold">
             How does it work?
           </h2>
@@ -240,7 +240,7 @@ async function updateSingleScore(recipient: string, scoreChange:number){
         </div>
         }
 
-        {(show.CurrentScreen == 'Questions - voting' || show.CurrentScreen == 'Questions - summary') &&
+        {(currentScreen == 'Questions - voting' || currentScreen == 'Questions - summary') &&
         <div className="py-12 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:text-center">
@@ -251,7 +251,7 @@ async function updateSingleScore(recipient: string, scoreChange:number){
         </div>
         }
 
-        {(show.CurrentScreen == 'Questions - summary' || show.CurrentScreen == 'Scoreboard') && 
+        {(currentScreen == 'Questions - summary' || currentScreen == 'Scoreboard') && 
         <div className="py-12 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mt-10">

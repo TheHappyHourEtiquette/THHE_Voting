@@ -34,12 +34,18 @@ const Thhe: NextPage = () => {
   const [scoreUpdateEffect, setScoreUpdateEffect] = useState(false);
   
   const [show, setShow] = useState<Show>({
+    id: "",
     Title: "",
+    session: "",
     Host: {
       Title: "",
       ImageUrl: "",
       TotalScore: 0
     },
+    SelectedQuestion: "",
+    SelectedPanellist: "",
+    SelectedDFI: "",
+    CurrentScreen: "Home",
     Panellists: [],
     Questions: [],
     DefendTheIndefensibles: []
