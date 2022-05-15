@@ -21,7 +21,7 @@ Here is some sample data
             "ImageUrl": "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/MarijnSomers.jpg",
             "TotalScore": 0
         },
-	{
+	    {
             "Title": "Luise Freese",
             "ImageUrl": "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/LuiseFreese.jpg",
             "TotalScore": 0
@@ -37,9 +37,21 @@ Here is some sample data
     "SelectedDFI":"",
     "CurrentScreen":"Home",
     "Questions": [
-        "Which tip did you get from someone must recently do this ever since",
-        "Which core ideas /beliefs do we need to manifest in corporate culture to foster good M365 etiquette",
-        "What is a often given, but in your opinion overrated advice when it comes to good M365 etiquette"
+        {
+            "QuestionText": "Which tip did you get from someone must recently do this ever since",
+            "QuestionOrder":1,
+            "Scores": []
+        },
+        {
+            "QuestionText": "Which core ideas /beliefs do we need to manifest in corporate culture to foster good M365 etiquette",
+            "QuestionOrder":2,
+            "Scores": []
+        },
+        {
+            "QuestionText": "What is a often given, but in your opinion overrated advice when it comes to good M365 etiquette",
+            "QuestionOrder":3,
+            "Scores": []
+        }
     ],
     "DefendTheIndefensibles": [
         "It's perfectly fine to leave those at home until last in meetings",

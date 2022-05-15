@@ -7,7 +7,7 @@ export interface Show {
     id: string;
     session: string;
     SelectedQuestion: string;
-    SelectedPanellist: string;
+    SelectedPanellist: Panellist;
     SelectedDFI: string;
     CurrentScreen: string;
     Host: Panellist;

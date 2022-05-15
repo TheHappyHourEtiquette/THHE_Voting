@@ -43,7 +43,7 @@ const Thhe: NextPage = () => {
       TotalScore: 0
     },
     SelectedQuestion: "",
-    SelectedPanellist: "",
+    SelectedPanellist: {"Title": "","ImageUrl": "","TotalScore": 0},
     SelectedDFI: "",
     CurrentScreen: "Home",
     Panellists: [],

@@ -1,0 +1,39 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get","post"
+      ]
+    },
+    {
+      "type": "signalR",
+      "name": "signalRMessages",
+      "hubName": "serverless",
+      "connectionStringSetting": "AzureSignalRConnectionString",
+      "direction": "out"
+    },
+    {
+      "name": "showDocuments",
+      "type": "cosmosDB",
+      "direction": "in",
+      "databaseName": "voting",
+      "collectionName": "sessions",
+      "sqlQuery": "SELECT * from c where c.itemType = 'Show'",
+      "createIfNotExists": true,
+      "connectionStringSetting": "VotingDBConnection"
+    },
+    {
+      "name": "showDocument",
+      "type": "cosmosDB",
+      "databaseName": "voting",
+      "collectionName": "sessions",
+      "createIfNotExists": true,
+      "connectionStringSetting": "VotingDBConnection",
+      "direction": "out"
+    }
+  ]
+}
