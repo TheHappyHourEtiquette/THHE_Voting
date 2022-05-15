@@ -260,7 +260,7 @@ async function updateSingleScore(recipient: string, scoreChange:number){
               <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-1 md:gap-x-8 md:gap-y-10"> 
                 <div className="relative">
                   <dt>
-                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Let's chat! Let us know what you think to by putting your hand up.</p>
+                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Time to chat! Let us know what you think to by putting your hand up.</p>
                   </dt>
                 </div>
               </dl>
