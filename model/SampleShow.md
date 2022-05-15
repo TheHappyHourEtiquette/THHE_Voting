@@ -6,48 +6,56 @@ Here is some sample data
     "id": "401f9455-463d-43ee-bb42-79ed2f67c021",
     "Title": "Scottish Summit 2022",
     "Host": {
+        "PanellistId":0,
         "Title": "Kevin McDonnell",
         "ImageUrl": "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/KevinMcDonnell.jpg",
         "TotalScore": 0
     },
     "Panellists": [
         {
+            "PanellistId":1,
             "Title": "Al Eardley",
             "ImageUrl": "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/Al%20Eardley.jpg",
             "TotalScore": 0
         },
-	{
+        {
+            "PanellistId":2,
             "Title": "Marijn Somers",
             "ImageUrl": "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/MarijnSomers.jpg",
             "TotalScore": 0
         },
-	    {
+        {
+            "PanellistId":3,
             "Title": "Luise Freese",
             "ImageUrl": "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/LuiseFreese.jpg",
             "TotalScore": 0
         },
         {
+            "PanellistId":4,
             "Title": "Sara Fennah",
             "ImageUrl": "https://github.com/TheHappyHourEtiquette/THHE-Shows/raw/main/PanellistImages/SaraFennah.jpg",
             "TotalScore": 0
         }
     ],
-    "SelectedQuestion":{"QuestionText":"","QuestionOrder":1,"Scores":[]},
-    "SelectedPanellist": {"Title": "","ImageUrl": "","TotalScore": 0},
-    "SelectedDFI":"",
+    "SelectedQuestionId": 1,
+    "SelectedPanellistId": 1,
+    "SelectedDFIId": 1,
     "CurrentScreen":"Home",
     "Questions": [
         {
+            "QuestionId":1,
             "QuestionText": "Which tip did you get from someone must recently do this ever since",
             "QuestionOrder":1,
             "Scores": []
         },
         {
+            "QuestionId":2,
             "QuestionText": "Which core ideas /beliefs do we need to manifest in corporate culture to foster good M365 etiquette",
             "QuestionOrder":2,
             "Scores": []
         },
         {
+            "QuestionId":3,
             "QuestionText": "What is a often given, but in your opinion overrated advice when it comes to good M365 etiquette",
             "QuestionOrder":3,
             "Scores": []
