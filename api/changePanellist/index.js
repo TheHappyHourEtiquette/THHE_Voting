@@ -11,7 +11,7 @@ module.exports = function (context, req) {
     }
     
     var show = context.bindings.showDocuments[0];
-    show.SelectedPanellistId = panellist;
+    show.SelectedPanellistId = panellistId;
 
     context.bindings.showDocument = JSON.stringify(show);
 

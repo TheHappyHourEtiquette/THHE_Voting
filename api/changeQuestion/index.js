@@ -16,8 +16,8 @@ module.exports = function (context, req) {
     context.bindings.showDocument = JSON.stringify(show);
 
     context.bindings.signalRMessages = [{
-        "target": "panellistChanged",
-        "arguments": [ panellist ]
+        "target": "questionChanged",
+        "arguments": [ questionId ]
     }];
     context.done();
 }

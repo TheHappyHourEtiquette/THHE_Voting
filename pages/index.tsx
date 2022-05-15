@@ -67,10 +67,12 @@ const Home: NextPage = () => {
     console.log('Show update received');
     setShow(showUpdate);
     setCurrentScreen(showUpdate.CurrentScreen);
+    console.log(show.SelectedPanellistId);
     const matchingPanellist = show.Panellists.find(p => p.PanellistId == show.SelectedPanellistId); 
     if (matchingPanellist != null) {
       setSelectedPanellist(matchingPanellist);
     }
+    console.log(show.SelectedQuestionId);
     const matchingQuestion = show.Questions.find(q => q.QuestionId == show.SelectedQuestionId); 
     if (matchingQuestion != null) {
       setSelectedQuestion(matchingQuestion);
