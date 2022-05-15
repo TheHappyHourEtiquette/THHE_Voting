@@ -42,8 +42,8 @@ const Home: NextPage = () => {
       ImageUrl: "",
       TotalScore: 0
     },
-    SelectedQuestion: "",
-    SelectedPanellist: "",
+    SelectedQuestion:{"QuestionText":"","QuestionOrder":1,"Scores":[]},
+    SelectedPanellist: {"Title": "","ImageUrl": "","TotalScore": 0},
     SelectedDFI: "",
     CurrentScreen: "Home",
     Panellists: [],

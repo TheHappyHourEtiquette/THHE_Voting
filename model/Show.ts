@@ -6,7 +6,7 @@ export interface Show {
     Title: string;
     id: string;
     session: string;
-    SelectedQuestion: string;
+    SelectedQuestion: Question;
     SelectedPanellist: Panellist;
     SelectedDFI: string;
     CurrentScreen: string;
