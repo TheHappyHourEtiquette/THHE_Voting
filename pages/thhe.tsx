@@ -38,13 +38,14 @@ const Thhe: NextPage = () => {
     Title: "",
     session: "",
     Host: {
+      PanellistId: 0,
       Title: "",
       ImageUrl: "",
       TotalScore: 0
     },
-    SelectedQuestion: "",
-    SelectedPanellist: "",
-    SelectedDFI: "",
+    SelectedQuestionId: 1,
+    SelectedPanellistId: 1,
+    SelectedDFIId: 1,
     CurrentScreen: "Home",
     Panellists: [],
     Questions: [],
@@ -156,6 +157,48 @@ const sendScreenChange = (screenName: string) => {
   }
 }
 
+const sendQuestionChange = (questionId: string) => {
+  try {
+    const body = { questionId: questionId};
+    const res = fetch(`${functionsURL}/api/changeQuestion`, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }).then((res)=>{
+      let data = res.text();
+      console.log(data);
+    });
+  }
+  catch(err) {
+    console.log(err);
+    setTimeout(start, 5000);
+  }
+}
+
+const sendPanellistChange = (panellistId: string) => {
+  try {
+    const body = { panellistId: panellistId};
+    const res = fetch(`${functionsURL}/api/changePanellist`, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }).then((res)=>{
+      let data = res.text();
+      console.log(data);
+    });
+  }
+  catch(err) {
+    console.log(err);
+    setTimeout(start, 5000);
+  }
+}
+
 async function updateSingleScore(recipient: string, scoreChange:number){
   try {
     console.log("Initial panellists")
@@ -243,9 +286,9 @@ async function updateSingleScore(recipient: string, scoreChange:number){
           {
             show.Questions.map((question: any) => {
               return (  
-                <div className="lg:text-center" key={question}>
+                <div className="lg:text-center" key={question.QuestionId} onClick={() => sendQuestionChange(question.QuestionId)}>
                   <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-                  <Icon iconName="Send" />  {question}?
+                  <Icon iconName="Send" />  {question.QuestionId} - {question.QuestionText}?
                   </p>
                 </div>
             )})
@@ -262,12 +305,12 @@ async function updateSingleScore(recipient: string, scoreChange:number){
               {
               show.Panellists.map((panellist: any) => {
                 return (  
-                <div className="relative" key={panellist.Title}>
+                <div className="relative" key={panellist.Title} onClick={() => sendPanellistChange(panellist.PanellistId)}>
                   <dt>
                     <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
                       <img src={panellist.ImageUrl} alt={panellist.Title}/>
                     </div>
-                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">{panellist.Title}</p>
+                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">{panellist.PanellistId} - {panellist.Title}</p>
                   </dt>
                 </div>
                 )

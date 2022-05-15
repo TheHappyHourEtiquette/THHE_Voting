@@ -1,23 +1,23 @@
 const uuid = require('uuid');
 
-// use this to update scores regularly every 30 seconds
+// TODO: Change to Typescript
 
 module.exports = function (context, req) {
-    const screenName = req.body.screenName;
-    console.log(`ScreenName: ${screenName}`);
+    const questionId = req.body.questionId;
+    console.log(`QuestionId: ${questionId}`);
 
     if (context.bindings.showDocuments.length != 1) {
         throw '0 or more than 1 show docs found';
     }
     
     var show = context.bindings.showDocuments[0];
-    show.CurrentScreen = screenName;
+    show.SelectedQuestionId = questionId;
 
     context.bindings.showDocument = JSON.stringify(show);
 
     context.bindings.signalRMessages = [{
-        "target": "screenChanged",
-        "arguments": [ screenName ]
+        "target": "panellistChanged",
+        "arguments": [ panellist ]
     }];
     context.done();
 }

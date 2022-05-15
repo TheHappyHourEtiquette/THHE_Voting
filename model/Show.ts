@@ -6,9 +6,9 @@ export interface Show {
     Title: string;
     id: string;
     session: string;
-    SelectedQuestion: string;
-    SelectedPanellist: string;
-    SelectedDFI: string;
+    SelectedQuestionId: number;
+    SelectedPanellistId: number;
+    SelectedDFIId: number;
     CurrentScreen: string;
     Host: Panellist;
     Panellists: Panellist[];

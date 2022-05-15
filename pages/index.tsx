@@ -21,8 +21,6 @@ const Home: NextPage = () => {
 
     
 
-  const [messages, setMessages] = useState<string[]>([]);
-  const [message, setMessage] = useState<string>("");
   const [loaded, setLoaded] = useState<Boolean>(false);
   //const { hubConnectionState, error } = useHub(connection);
   const [ hubConnectionState, setHubConnectionState ] = useState<signalR.HubConnectionState>(signalR.HubConnectionState.Disconnected);
@@ -32,19 +30,32 @@ const Home: NextPage = () => {
   const [scoreDownEffect, setScoreDownEffect] = useState(false);
   const [scoreUpdateEffect, setScoreUpdateEffect] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<string>("Home");
+  const [SelectedPanellist, setSelectedPanellist] = useState<Panellist>({
+    PanellistId: 0,
+    Title: "",
+    ImageUrl: "",
+    TotalScore: 0
+  });
+  const [SelectedQuestion, setSelectedQuestion] = useState<Question>({
+    "QuestionId":0,
+    "QuestionText": "",
+    "QuestionOrder":1,
+    "Scores": []
+  });
   
   const [show, setShow] = useState<Show>({
     id: "",
     Title: "",
     session: "",
     Host: {
+      PanellistId: 0,
       Title: "",
       ImageUrl: "",
       TotalScore: 0
     },
-    SelectedQuestion: "",
-    SelectedPanellist: "",
-    SelectedDFI: "",
+    SelectedQuestionId: 1,
+    SelectedPanellistId: 1,
+    SelectedDFIId: 1,
     CurrentScreen: "Home",
     Panellists: [],
     Questions: [],
@@ -55,6 +66,15 @@ const Home: NextPage = () => {
   connection.on('showUpdate', (showUpdate) => {
     console.log('Show update received');
     setShow(showUpdate);
+    setCurrentScreen(showUpdate.CurrentScreen);
+    const matchingPanellist = show.Panellists.find(p => p.PanellistId == show.SelectedPanellistId); 
+    if (matchingPanellist != null) {
+      setSelectedPanellist(matchingPanellist);
+    }
+    const matchingQuestion = show.Questions.find(q => q.QuestionId == show.SelectedQuestionId); 
+    if (matchingQuestion != null) {
+      setSelectedQuestion(matchingQuestion);
+    }
     setScoreUpdateEffect(true);
   });
 
@@ -116,6 +136,7 @@ async function loadShow() {
       return data
     });
     setShow(data);
+    setCurrentScreen(data.CurrentScreen);
     setLoaded(true);
   }
 }
@@ -244,14 +265,30 @@ async function updateSingleScore(recipient: string, scoreChange:number){
         <div className="py-12 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:text-center">
-              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Question</p>
-              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">What is the behaviour that people should stop doing in Microsoft 365 (and how should they do it)?</p>
+              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Question {SelectedQuestion.QuestionId}</p>
+              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">{SelectedQuestion.QuestionText}?</p>
             </div>
           </div>
         </div>
         }
 
-        {(currentScreen == 'Questions - summary' || currentScreen == 'Scoreboard') && 
+      {(currentScreen == 'Questions - summary') && 
+        <div className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mt-10">
+              <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-1 md:gap-x-8 md:gap-y-10"> 
+                <div className="relative">
+                  <dt>
+                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Time to chat! Let us know what you think to by putting your hand up.</p>
+                  </dt>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </div>
+        }
+
+        {(currentScreen == 'Scoreboard') && 
         <div className="py-12 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mt-10">
@@ -297,6 +334,52 @@ async function updateSingleScore(recipient: string, scoreChange:number){
                 )
             })
             }
+            </dl>
+            </div>
+          </div>
+        </div>
+        }
+
+        {(currentScreen == 'Questions - voting') && 
+        <div className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mt-10">
+              <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-1 md:gap-x-8 md:gap-y-10">
+                <div className="relative" key={SelectedPanellist.Title}>
+                  <dt>
+                    <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                      <img src={SelectedPanellist.ImageUrl} alt={SelectedPanellist.Title}/>
+                    </div>
+                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">{SelectedPanellist.Title}</p>
+                  </dt>
+                  <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-4 md:gap-x-8 md:gap-y-16">
+                    <div className="relative">  
+                    </div>
+                    <div className={`${scoreUpEffect && "animate-ping"} relative`} onClick={() => {
+                      sendScore(SelectedPanellist.Title,1);
+                      setScoreUpEffect(true);
+                    }} onAnimationEnd={() => setScoreUpEffect(false)}>  
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 8192" className="svg_dd790ee3" focusable="false"><path d="M1024 0q141 0 272 36t244 104 207 160 161 207 103 245 37 272q0 141-36 272t-104 244-160 207-207 161-245 103-272 37q-141 0-272-36t-244-104-207-160-161-207-103-245-37-272q0-141 36-272t104-244 160-207 207-161T752 37t272-37zm603 685l-136-136-659 659-275-275-136 136 411 411 795-795z" className="x-hidden-focus"></path></svg>
+                    </div>
+                    <div className={`${scoreBigEffect && "animate-ping"} relative`} onClick={() => {
+                      sendScore(SelectedPanellist.Title,3);
+                      setScoreBigEffect(true);
+                    }} onAnimationEnd={() => setScoreBigEffect(false)}>  
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 8192" className="svg_dd790ee3" focusable="false"><path d="M1416 1254l248 794-640-492-640 492 248-794L0 768h784L1024 0l240 768h784l-632 486z" className="x-hidden-focus"></path></svg>
+                    </div>
+                    <div className={`${scoreDownEffect && "animate-ping"} relative`} onClick={() => {
+                      sendScore(SelectedPanellist.Title,-1);
+                      setScoreDownEffect(true);
+                    }} onAnimationEnd={() => setScoreDownEffect(false)}>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 8192" className="svg_dd790ee3 x-hidden-focus" focusable="false"><path d="M1024 0q141 0 272 36t244 104 207 160 161 207 103 245 37 272q0 141-36 272t-104 244-160 207-207 161-245 103-272 37q-141 0-272-36t-244-104-207-160-161-207-103-245-37-272q0-141 36-272t104-244 160-207 207-161T752 37t272-37zm128 1536v-256H896v256h256zm0-384V512H896v640h256z"></path></svg>
+                    </div>
+                  </dl>
+                  <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-1 md:gap-x-8 md:gap-y-16">
+                  <p className={`${scoreUpdateEffect && "animate-ping"} mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl`} onAnimationEnd={() => setScoreUpdateEffect(false)}>
+                    Score: {SelectedPanellist.TotalScore}
+                  </p>
+                  </dl>
+                </div>
             </dl>
             </div>
           </div>
