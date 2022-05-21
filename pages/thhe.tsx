@@ -1,7 +1,7 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import * as signalR from "@microsoft/signalr"
-import { useState } from 'react';
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import * as signalR from "@microsoft/signalr";
+import { useState, useEffect } from 'react';
 import { Show } from '../model/Show';
 import { Icon } from '@fluentui/react/lib/Icon';
 import { Panellist } from '../model/Panellist';
@@ -14,14 +14,6 @@ const Thhe: NextPage = () => {
   // const functionsURL = "http://localhost:4280";
   //const functionsURL = "http://localhost:7071";
 
-  const connection = new signalR.HubConnectionBuilder()
-    .withUrl(`${functionsURL}/api`)
-    .configureLogging(signalR.LogLevel.Information)
-    .withAutomaticReconnect()
-    .build();
-
-    
-
   const [messages, setMessages] = useState<string[]>([]);
   const [message, setMessage] = useState<string>("");
   const [loaded, setLoaded] = useState<Boolean>(false);
@@ -32,6 +24,7 @@ const Thhe: NextPage = () => {
   const [scoreBigEffect, setScoreBigEffect] = useState(false);
   const [scoreDownEffect, setScoreDownEffect] = useState(false);
   const [scoreUpdateEffect, setScoreUpdateEffect] = useState(false);
+  const [connection, setConnection] = useState<signalR.HubConnection>();
   
   const [show, setShow] = useState<Show>({
     id: "",
@@ -53,48 +46,42 @@ const Thhe: NextPage = () => {
   });
   //const { invoke, loading } = useHubMethod(connection, "newMessage");
 
-  connection.on('showUpdate', (showUpdate) => {
-    console.log('Show update received');
-    setShow(showUpdate);
-    setScoreUpdateEffect(true);
-});
+  useEffect(() => {
+    const newConnection: signalR.HubConnection = new signalR.HubConnectionBuilder()
+        .withUrl(`${functionsURL}/api`)
+        .withAutomaticReconnect()
+        .build();
 
-connection.on('updatedScore', (recipient, scoreChange) => {
-  console.log('Response: ' + recipient + ' ' + scoreChange + ' score change');
-  console.log('Received updated score with state as ' + connection.state);
-  /*let updatedShow = show;
-  let matchingPanellist = updatedShow.Panellists.find(p => p.Title == recipient);
-  if (matchingPanellist != null) {
-    matchingPanellist.TotalScore += scoreChange;
-  }*/
-  updateSingleScore(recipient, scoreChange);
-  setScoreUpdateEffect(true);
-
-});
+    setConnection(newConnection);
+}, []);
 
 
-connection.onclose(async () => {
-  // await start();
-});
+useEffect(() => {
+  if (connection) {
+      connection.start()
+          .then(result => {
+              console.log('Connected!');
 
-async function start() {
-  try {
-    await connection.start();
-    //console.log("SignalR connected");
-    connection.send("newMessage", "started").then(()=> {
-      console.log("It sent");
-    }).catch((err) => {
-      console.log("there was a sent error: " + err);
-    })
-    ;
-    // console.log("message sent");
-    
+              connection.on('showUpdate', (showUpdate) => {
+                  //console.log('Show update received');
+                  setShow(showUpdate);
+                  setScoreUpdateEffect(true);
+
+              });
+            
+              connection.on('screenChanged', (screenName) => {
+              });
+            
+            connection.on('updatedScore', (recipient, scoreChange) => {
+              console.log('Response: ' + recipient + ' ' + scoreChange + ' score change');
+      updateSingleScore(recipient, scoreChange);
+      setScoreUpdateEffect(true);
+            });
+          })
+          .catch(e => console.log('Connection failed: ', e));
   }
-  catch(err) {
-    console.log("Humph, it failed: " + err);
-    setTimeout(start, 5000);
-  }
-}
+}, [connection]);
+
 
 async function loadShow() {
   
@@ -107,7 +94,7 @@ async function loadShow() {
       },
     });
     let data = await res.json() as Show;
-    console.log(data);
+    // console.log(data);
     setShow(data => {
       return data
     });
@@ -128,11 +115,10 @@ async function sendMessage(message: string) {
       body: JSON.stringify(body),
     });
     let data = await res.text();
-    console.log(data);
+    // console.log(data);
   }
   catch(err) {
     console.log(err);
-    setTimeout(start, 5000);
   }
 }
 
@@ -148,12 +134,11 @@ const sendScreenChange = (screenName: string) => {
       body: JSON.stringify(body),
     }).then((res)=>{
       let data = res.text();
-      console.log(data);
+      // console.log(data);
     });
   }
   catch(err) {
     console.log(err);
-    setTimeout(start, 5000);
   }
 }
 
@@ -169,12 +154,11 @@ const sendQuestionChange = (questionId: string) => {
       body: JSON.stringify(body),
     }).then((res)=>{
       let data = res.text();
-      console.log(data);
+      // console.log(data);
     });
   }
   catch(err) {
     console.log(err);
-    setTimeout(start, 5000);
   }
 }
 
@@ -190,20 +174,19 @@ const sendPanellistChange = (panellistId: string) => {
       body: JSON.stringify(body),
     }).then((res)=>{
       let data = res.text();
-      console.log(data);
+      //console.log(data);
     });
   }
   catch(err) {
     console.log(err);
-    setTimeout(start, 5000);
   }
 }
 
 async function updateSingleScore(recipient: string, scoreChange:number){
   try {
-    console.log("Initial panellists")
+    /*console.log("Initial panellists")
     console.log(show.Panellists);
-    console.log(show);
+    console.log(show);*/
     const updatedPanellists = show.Panellists.map(p => p.Title == recipient ? { ...p, TotalScore: (p.TotalScore+scoreChange)} : p);
     console.log("Updated panellists")
     console.log(updatedPanellists);
@@ -212,14 +195,13 @@ async function updateSingleScore(recipient: string, scoreChange:number){
   }
   catch(err) {
     console.log(err);
-    setTimeout(start, 5000);
   }
 }
 
   const inputChanged = (event: React.KeyboardEvent<HTMLInputElement>) => {
     event.preventDefault();
   }
-  start();
+  
   loadShow();
   //console.log(show.Panellists);
 

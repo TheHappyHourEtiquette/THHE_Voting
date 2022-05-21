@@ -1,11 +1,13 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import * as signalR from "@microsoft/signalr"
-import { useState } from 'react';
+import * as signalR from "@microsoft/signalr";
+import { useState, useEffect } from 'react';
+import { Icon } from '@fluentui/react/lib/Icon';
 import { Show } from '../model/Show';
 import { Panellist } from '../model/Panellist';
 import { Question } from '../model/Question';
 import { DefendTheIndefensible } from '../model/DefendTheIndefensible';
+import { IGroupShowAllProps } from '@fluentui/react';
 
 
 const Home: NextPage = () => {
@@ -13,15 +15,17 @@ const Home: NextPage = () => {
   // const functionsURL = "http://localhost:4280";
   //const functionsURL = "http://localhost:7071";
 
+  /*
   const connection = new signalR.HubConnectionBuilder()
     .withUrl(`${functionsURL}/api`)
     .configureLogging(signalR.LogLevel.Information)
     .withAutomaticReconnect()
     .build();
-
-    
-
+  */
+  
+  const [connection, setConnection] = useState<signalR.HubConnection>();
   const [loaded, setLoaded] = useState<Boolean>(false);
+  const [connected, setConnected] = useState<Boolean>(false);
   //const { hubConnectionState, error } = useHub(connection);
   const [ hubConnectionState, setHubConnectionState ] = useState<signalR.HubConnectionState>(signalR.HubConnectionState.Disconnected);
   const [hubConnectionId, setHubConnectionId] = useState<string>("");
@@ -63,16 +67,120 @@ const Home: NextPage = () => {
   });
   //const { invoke, loading } = useHubMethod(connection, "newMessage");
 
+  useEffect(() => {
+    const newConnection: signalR.HubConnection = new signalR.HubConnectionBuilder()
+        .withUrl(`${functionsURL}/api`)
+        .withAutomaticReconnect()
+        .build();
+
+    setConnection(newConnection);
+}, []);
+
+  useEffect(() => {
+    if (connection) {
+        connection.start()
+            .then(result => {
+                console.log('Connected!');
+
+                connection.on('showUpdate', (showUpdate) => {
+                  console.log('Show update received');
+                  setShow(showUpdate);
+                  setCurrentScreen(showUpdate.CurrentScreen);
+                  //console.log(show.SelectedPanellistId);
+                  const matchingPanellist = show.Panellists.find(p => p.PanellistId == show.SelectedPanellistId); 
+                  console.log(matchingPanellist);
+                  if (matchingPanellist != null) {
+                    console.log("Panellist: " + matchingPanellist.Title);
+                    setSelectedPanellist(matchingPanellist);
+                  }
+                  //console.log(show.SelectedQuestionId);
+                  const matchingQuestion = show.Questions.find(q => q.QuestionId == show.SelectedQuestionId); 
+                  if (matchingQuestion != null) {
+                    console.log("Selected question: " + SelectedQuestion.QuestionText);
+                    setSelectedQuestion(matchingQuestion);
+                  }
+                  setScoreUpdateEffect(true);
+                });
+              
+                connection.on('screenChanged', (screenName) => {
+                  console.log('Screen changed: ' + screenName);
+                  setCurrentScreen(screenName);
+                });
+              
+              connection.on('updatedScore', (recipient, scoreChange) => {
+                console.log('Response: ' + recipient + ' ' + scoreChange + ' score change');
+                console.log('Received updated score with state as ' + connection.state);
+                updateSingleScore(recipient, scoreChange);
+                setScoreUpdateEffect(true);
+              
+              });
+
+              connection.on('panellistChanged', (panellistId) => {
+                const matchingPanellist = show.Panellists.find(p => p.PanellistId == panellistId); 
+                if (matchingPanellist != null) {
+                  setSelectedPanellist(matchingPanellist);
+                }
+              });
+
+              connection.on('questionChanged', (questionId) => {
+                const matchingQuestion = show.Questions.find(q => q.QuestionId == questionId); 
+                  if (matchingQuestion != null) {
+                    setSelectedQuestion(matchingQuestion);
+                  }
+                  setScoreUpdateEffect(true);
+              });
+            })
+            .catch(e => console.log('Connection failed: ', e));
+    };
+    
+  loadShow();
+}, [connection]);
+
+/*
+  // onShowUpdate, onScreenChanged, onUpdatedScore)
+  useEffect(() => {
+    const handleShowUpdate = (showUpdate: Show) => {
+      //console.log('Show update received');
+      setShow(showUpdate);
+      setCurrentScreen(showUpdate.CurrentScreen);
+      //console.log(show.SelectedPanellistId);
+      const matchingPanellist = show.Panellists.find(p => p.PanellistId == show.SelectedPanellistId); 
+      if (matchingPanellist != null) {
+        setSelectedPanellist(matchingPanellist);
+      }
+      //console.log(show.SelectedQuestionId);
+      const matchingQuestion = show.Questions.find(q => q.QuestionId == show.SelectedQuestionId); 
+      if (matchingQuestion != null) {
+        setSelectedQuestion(matchingQuestion);
+      }
+      setScoreUpdateEffect(true);
+    };
+
+    const handleScreenChanged = (screenName: string) => {
+      console.log('Screen changed: ' + screenName);
+      setCurrentScreen(screenName);
+    };
+
+    const handleUpdatedScore = (recipient: string, scoreChange: number) => {
+      console.log('Response: ' + recipient + ' ' + scoreChange + ' score change');
+      updateSingleScore(recipient, scoreChange);
+      setScoreUpdateEffect(true);
+    };
+
+    srConnector.events(handleShowUpdate, handleScreenChanged,handleUpdatedScore);
+  });
+*/
+  /*
   connection.on('showUpdate', (showUpdate) => {
-    console.log('Show update received');
+    //console.log('Show update received');
     setShow(showUpdate);
     setCurrentScreen(showUpdate.CurrentScreen);
-    console.log(show.SelectedPanellistId);
+    //console.log(show.SelectedPanellistId);
     const matchingPanellist = show.Panellists.find(p => p.PanellistId == show.SelectedPanellistId); 
     if (matchingPanellist != null) {
       setSelectedPanellist(matchingPanellist);
     }
-    console.log(show.SelectedQuestionId);
+    //console.log(show.SelectedQuestionId);
     const matchingQuestion = show.Questions.find(q => q.QuestionId == show.SelectedQuestionId); 
     if (matchingQuestion != null) {
       setSelectedQuestion(matchingQuestion);
@@ -81,18 +189,13 @@ const Home: NextPage = () => {
   });
 
   connection.on('screenChanged', (screenName) => {
-    console.log('Show update received');
+    console.log('Screen changed: ' + screenName);
     setCurrentScreen(screenName);
   });
 
 connection.on('updatedScore', (recipient, scoreChange) => {
   console.log('Response: ' + recipient + ' ' + scoreChange + ' score change');
   console.log('Received updated score with state as ' + connection.state);
-  /*let updatedShow = show;
-  let matchingPanellist = updatedShow.Panellists.find(p => p.Title == recipient);
-  if (matchingPanellist != null) {
-    matchingPanellist.TotalScore += scoreChange;
-  }*/
   updateSingleScore(recipient, scoreChange);
   setScoreUpdateEffect(true);
 
@@ -103,28 +206,26 @@ connection.onclose(async () => {
   // await start();
 });
 
+
 async function start() {
   try {
-    await connection.start();
-    //console.log("SignalR connected");
-    connection.send("newMessage", "started").then(()=> {
-      console.log("It sent");
-    }).catch((err) => {
-      console.log("there was a sent error: " + err);
-    })
-    ;
-    // console.log("message sent");
-    
+    //if (!connected) {
+      console.log('Connecting');
+      await connection.start();
+      setConnected(true);
+      //console.log("SignalR connected");
+      
+      // console.log("message sent");
+    //}
   }
   catch(err) {
     console.log("Humph, it failed: " + err);
     setTimeout(start, 5000);
   }
 }
-
+*/
 async function loadShow() {
   
-  if (!loaded) {
     const res = await fetch(`${functionsURL}/api/getShow`, {
       method: "GET",
       mode: "cors",
@@ -133,14 +234,13 @@ async function loadShow() {
       },
     });
     let data = await res.json() as Show;
-    console.log(data);
+    // console.log(data);
     setShow(data => {
       return data
     });
     setShow(data);
     setCurrentScreen(data.CurrentScreen);
     setLoaded(true);
-  }
 }
 
 async function sendMessage(message: string) {
@@ -155,11 +255,10 @@ async function sendMessage(message: string) {
       body: JSON.stringify(body),
     });
     let data = await res.text();
-    console.log(data);
+    // console.log(data);
   }
   catch(err) {
     console.log(err);
-    setTimeout(start, 5000);
   }
 }
 
@@ -175,36 +274,33 @@ const sendScore = (recipient: string, scoreChange:number) => {
       body: JSON.stringify(body),
     }).then((res)=>{
       let data = res.text();
-      console.log(data);
+      // console.log(data);
     });
   }
   catch(err) {
     console.log(err);
-    setTimeout(start, 5000);
   }
 }
 
 async function updateSingleScore(recipient: string, scoreChange:number){
   try {
-    console.log("Initial panellists")
+    /*console.log("Initial panellists")
     console.log(show.Panellists);
-    console.log(show);
+    console.log(show);*/
     const updatedPanellists = show.Panellists.map(p => p.Title == recipient ? { ...p, TotalScore: (p.TotalScore+scoreChange)} : p);
-    console.log("Updated panellists")
-    console.log(updatedPanellists);
+    /*console.log("Updated panellists")
+    console.log(updatedPanellists);*/
     setShow({...show, Panellists:updatedPanellists});
     setScoreUpdateEffect(true);
   }
   catch(err) {
     console.log(err);
-    setTimeout(start, 5000);
   }
 }
 
   const handleSubmit = (event: any) => {//React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     console.warn('setting message:' + event.target.name.value);
-    console.log("HandleSubmit ConnectionState: " + hubConnectionState + ", " + connection.state);
     /* invoke("newMessage","here is the message").then(()=> {
       console.log("something has happened: " + hubConnectionState);
     }).catch(()=> {
@@ -224,8 +320,6 @@ async function updateSingleScore(recipient: string, scoreChange:number){
   const inputChanged = (event: React.KeyboardEvent<HTMLInputElement>) => {
     event.preventDefault();
   }
-  start();
-  loadShow();
   //console.log(show.Panellists);
 
   return (
@@ -305,28 +399,7 @@ async function updateSingleScore(recipient: string, scoreChange:number){
                     </div>
                     <p className="ml-16 text-lg leading-6 font-medium text-gray-900">{panellist.Title}</p>
                   </dt>
-                  <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-4 md:gap-x-8 md:gap-y-16">
-                    <div className="relative">  
-                    </div>
-                    <div className={`${scoreUpEffect && "animate-ping"} relative`} onClick={() => {
-                      sendScore(panellist.Title,1);
-                      setScoreUpEffect(true);
-                    }} onAnimationEnd={() => setScoreUpEffect(false)}>  
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 8192" className="svg_dd790ee3" focusable="false"><path d="M1024 0q141 0 272 36t244 104 207 160 161 207 103 245 37 272q0 141-36 272t-104 244-160 207-207 161-245 103-272 37q-141 0-272-36t-244-104-207-160-161-207-103-245-37-272q0-141 36-272t104-244 160-207 207-161T752 37t272-37zm603 685l-136-136-659 659-275-275-136 136 411 411 795-795z" className="x-hidden-focus"></path></svg>
-                    </div>
-                    <div className={`${scoreBigEffect && "animate-ping"} relative`} onClick={() => {
-                      sendScore(panellist.Title,3);
-                      setScoreBigEffect(true);
-                    }} onAnimationEnd={() => setScoreBigEffect(false)}>  
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 8192" className="svg_dd790ee3" focusable="false"><path d="M1416 1254l248 794-640-492-640 492 248-794L0 768h784L1024 0l240 768h784l-632 486z" className="x-hidden-focus"></path></svg>
-                    </div>
-                    <div className={`${scoreDownEffect && "animate-ping"} relative`} onClick={() => {
-                      sendScore(panellist.Title,-1);
-                      setScoreDownEffect(true);
-                    }} onAnimationEnd={() => setScoreDownEffect(false)}>
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 8192" className="svg_dd790ee3 x-hidden-focus" focusable="false"><path d="M1024 0q141 0 272 36t244 104 207 160 161 207 103 245 37 272q0 141-36 272t-104 244-160 207-207 161-245 103-272 37q-141 0-272-36t-244-104-207-160-161-207-103-245-37-272q0-141 36-272t104-244 160-207 207-161T752 37t272-37zm128 1536v-256H896v256h256zm0-384V512H896v640h256z"></path></svg>
-                    </div>
-                  </dl>
+                  
                   <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-1 md:gap-x-8 md:gap-y-16">
                   <p className={`${scoreUpdateEffect && "animate-ping"} mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl`} onAnimationEnd={() => setScoreUpdateEffect(false)}>
                     Score: {panellist.TotalScore}
@@ -361,19 +434,19 @@ async function updateSingleScore(recipient: string, scoreChange:number){
                       sendScore(SelectedPanellist.Title,1);
                       setScoreUpEffect(true);
                     }} onAnimationEnd={() => setScoreUpEffect(false)}>  
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 8192" className="svg_dd790ee3" focusable="false"><path d="M1024 0q141 0 272 36t244 104 207 160 161 207 103 245 37 272q0 141-36 272t-104 244-160 207-207 161-245 103-272 37q-141 0-272-36t-244-104-207-160-161-207-103-245-37-272q0-141 36-272t104-244 160-207 207-161T752 37t272-37zm603 685l-136-136-659 659-275-275-136 136 411 411 795-795z" className="x-hidden-focus"></path></svg>
+                      <Icon iconName="CompletedSolid" />
                     </div>
                     <div className={`${scoreBigEffect && "animate-ping"} relative`} onClick={() => {
                       sendScore(SelectedPanellist.Title,3);
                       setScoreBigEffect(true);
                     }} onAnimationEnd={() => setScoreBigEffect(false)}>  
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 8192" className="svg_dd790ee3" focusable="false"><path d="M1416 1254l248 794-640-492-640 492 248-794L0 768h784L1024 0l240 768h784l-632 486z" className="x-hidden-focus"></path></svg>
+                    <Icon iconName="HeartFill" />
                     </div>
                     <div className={`${scoreDownEffect && "animate-ping"} relative`} onClick={() => {
                       sendScore(SelectedPanellist.Title,-1);
                       setScoreDownEffect(true);
                     }} onAnimationEnd={() => setScoreDownEffect(false)}>
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 8192" className="svg_dd790ee3 x-hidden-focus" focusable="false"><path d="M1024 0q141 0 272 36t244 104 207 160 161 207 103 245 37 272q0 141-36 272t-104 244-160 207-207 161-245 103-272 37q-141 0-272-36t-244-104-207-160-161-207-103-245-37-272q0-141 36-272t104-244 160-207 207-161T752 37t272-37zm128 1536v-256H896v256h256zm0-384V512H896v640h256z"></path></svg>
+                      <Icon iconName="AlertSolid" />
                     </div>
                   </dl>
                   <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-1 md:gap-x-8 md:gap-y-16">
