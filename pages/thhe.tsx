@@ -25,7 +25,7 @@ const Thhe: NextPage = () => {
   const [scoreDownEffect, setScoreDownEffect] = useState(false);
   const [scoreUpdateEffect, setScoreUpdateEffect] = useState(false);
   const [connection, setConnection] = useState<signalR.HubConnection>();
-  const [SelectedQuestion, setSelectedQuestion] = useState<string>(0);
+  const [SelectedQuestion, setSelectedQuestion] = useState<number>(0);
   
   const [show, setShow] = useState<Show>({
     id: "",
@@ -100,7 +100,7 @@ async function loadShow() {
       return data
     });
     setShow(data);
-    setSelectedQuestion(data.SelectedQuestionId.toString());
+    setSelectedQuestion(data.SelectedQuestionId);
     setLoaded(true);
   }
 }
@@ -144,7 +144,7 @@ const sendScreenChange = (screenName: string) => {
   }
 }
 
-const sendQuestionChange = (questionId: string) => {
+const sendQuestionChange = (questionId: number) => {
   try {
     const body = { questionId: questionId};
     setSelectedQuestion(questionId);
