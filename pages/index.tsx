@@ -1,13 +1,14 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import * as signalR from "@microsoft/signalr";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Icon } from '@fluentui/react/lib/Icon';
 import { Show } from '../model/Show';
 import { Panellist } from '../model/Panellist';
 import { Question } from '../model/Question';
 import { DefendTheIndefensible } from '../model/DefendTheIndefensible';
 import { IGroupShowAllProps } from '@fluentui/react';
+import Timer from '../components/Timer/Timer';
 
 
 const Home: NextPage = () => {
@@ -32,6 +33,9 @@ const Home: NextPage = () => {
   const [scoreDownEffect, setScoreDownEffect] = useState(false);
   const [scoreUpdateEffect, setScoreUpdateEffect] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<string>("Home");
+  const [isActive, setIsActive] = useState(false);
+  const [isPaused, setIsPaused] = useState(true);
+  const [time, setTime] = useState(180000);
   const [selectedPanellist, setSelectedPanellist] = useState<Panellist>({
     PanellistId: 0,
     Title: "",
@@ -63,6 +67,11 @@ const Home: NextPage = () => {
     Questions: [],
     DefendTheIndefensibles: []
   });
+
+  const id:any = useRef(null);
+  const clear=()=>{
+    window.clearInterval(id.current);
+  }
 
   //const { invoke, loading } = useHubMethod(connection, "newMessage");
 
@@ -131,7 +140,10 @@ const Home: NextPage = () => {
                 const matchingPanellist = show.Panellists.find(p => p.PanellistId == panellistId); 
                 if (matchingPanellist != null) {
                   setSelectedPanellist(matchingPanellist);
-                }
+                };
+                setIsActive(false);
+                  setIsPaused(false);
+                  setTime(180000);
               });
 
               connection.on('questionChanged', (questionId) => {
@@ -141,12 +153,49 @@ const Home: NextPage = () => {
                   }
                   setScoreUpdateEffect(true);
               });
+
+              connection.on('setTime', (updateType:string, updateTiming:number) => {
+                console.log('UpdateType: ' + updateType + ', updateTiming: ' + updateTiming);
+                //updateSingleScore(recipient, scoreChange);
+                //setScoreUpdateEffect(true);
+                if (updateType == "start") {
+                  setIsActive(true);
+                  setIsPaused(false);
+                }
+                if (updateType == "reset") {
+                  setIsActive(false);
+                  setIsPaused(false);
+                  setTime(updateTiming);
+                }
+              });
             })
             .catch(e => console.log('Connection failed: ', e));
     };
     
   loadShow();
 }, [connection]);
+
+
+  
+  
+  useEffect(() => {
+    let interval:any = null;
+  
+    if (isActive && isPaused === false) {
+      interval = setInterval(() => {
+        setTime((time) => time > 0 ? time - 10: 0);
+      }, 10);
+    } else {
+      clearInterval(interval);
+    }
+    if(time === 0){
+      clearInterval(interval);
+    }
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isActive, isPaused]);
 
 
 async function loadShow() {
@@ -247,18 +296,19 @@ const updateSingleScore = (recipient: string, scoreChange:number) => {
         }
 
         {(currentScreen == 'Questions - voting' || currentScreen == 'Questions - summary') &&
-        <div className="py-12 bg-white">
+        <div className="py-5 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:text-center">
               <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Question {SelectedQuestion.QuestionId}</p>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">{SelectedQuestion.QuestionText}?</p>
             </div>
+            
           </div>
         </div>
         }
 
       {(currentScreen == 'Questions - summary') && 
-        <div className="py-12 bg-white">
+        <div className="py-2 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mt-10">
               <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-1 md:gap-x-8 md:gap-y-10"> 
@@ -305,7 +355,7 @@ const updateSingleScore = (recipient: string, scoreChange:number) => {
         }
 
         {(currentScreen == 'Questions - voting') && 
-        <div className="py-12 bg-white">
+        <div className="py-2 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mt-10">
               <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-1 md:gap-x-8 md:gap-y-10">
@@ -339,12 +389,39 @@ const updateSingleScore = (recipient: string, scoreChange:number) => {
                     </div>
                   </dl>
                   <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-1 md:gap-x-8 md:gap-y-16">
-                  
                   </dl>
                 </div>
             </dl>
             </div>
           </div>
+          <div>
+              <Timer time={time} />
+              <div onClick={() => {
+                      setIsActive(true);
+                      setIsPaused(false);
+                    }}>
+                      Start
+                    </div>
+                    <div onClick={() => {
+                      setIsActive(true);
+                      setIsPaused(true);
+                    }}>
+                      Pause
+                    </div>
+                    <div onClick={() => {
+                      setIsActive(false);
+                      setIsPaused(false);
+                    }}>
+                      Stop
+                    </div>
+                    <div onClick={() => {
+                      setIsActive(false);
+                      setIsPaused(false);
+                      setTime(180000);
+                    }}>
+                      Reset
+                    </div>
+            </div>
         </div>
         }
       </main>

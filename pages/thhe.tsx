@@ -4,6 +4,7 @@ import * as signalR from "@microsoft/signalr";
 import { useState, useEffect } from 'react';
 import { Show } from '../model/Show';
 import { Icon } from '@fluentui/react/lib/Icon';
+import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { Panellist } from '../model/Panellist';
 import { Question } from '../model/Question';
 import { DefendTheIndefensible } from '../model/DefendTheIndefensible';
@@ -185,6 +186,26 @@ const sendPanellistChange = (panellistId: string) => {
   }
 }
 
+const setTime = (updateType: string, updateTiming: number) => {
+  try {
+    const body = { updateType: updateType, updateTiming:updateTiming};
+    const res = fetch(`${functionsURL}/api/setTime`, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }).then((res)=>{
+      let data = res.text();
+      //console.log(data);
+    });
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
+
 async function updateSingleScore(recipient: string, scoreChange:number){
   try {
     /*console.log("Initial panellists")
@@ -308,6 +329,24 @@ async function updateSingleScore(recipient: string, scoreChange:number){
             }
             </dl>
             </div>
+          <div className="mt-10">
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-10 rounded"
+              onClick={() => setTime("start",0)}>
+              Start timer
+            </button>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-10 rounded"
+              onClick={() => setTime("reset",180000)}>
+              Reset question
+            </button>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-10 rounded"
+              onClick={() => setTime("start",360000)}>
+              Reset summary
+            </button>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-10 rounded"
+              onClick={() => setTime("start",30000)}>
+              Reset DFI
+            </button>
+          </div>
       </main>
 
       <footer className="flex h-24 w-full items-center justify-center border-t">
