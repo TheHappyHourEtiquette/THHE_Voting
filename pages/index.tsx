@@ -26,15 +26,13 @@ const Home: NextPage = () => {
   const [connection, setConnection] = useState<signalR.HubConnection>();
   const [loaded, setLoaded] = useState<Boolean>(false);
   const [connected, setConnected] = useState<Boolean>(false);
-  //const { hubConnectionState, error } = useHub(connection);
-  const [ hubConnectionState, setHubConnectionState ] = useState<signalR.HubConnectionState>(signalR.HubConnectionState.Disconnected);
-  const [hubConnectionId, setHubConnectionId] = useState<string>("");
+  const [ lastUpdated, setLastUpdated ] = useState<string>(new Date().toUTCString());
   const [scoreUpEffect, setScoreUpEffect] = useState(false);
   const [scoreBigEffect, setScoreBigEffect] = useState(false);
   const [scoreDownEffect, setScoreDownEffect] = useState(false);
   const [scoreUpdateEffect, setScoreUpdateEffect] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<string>("Home");
-  const [SelectedPanellist, setSelectedPanellist] = useState<Panellist>({
+  const [selectedPanellist, setSelectedPanellist] = useState<Panellist>({
     PanellistId: 0,
     Title: "",
     ImageUrl: "",
@@ -65,6 +63,7 @@ const Home: NextPage = () => {
     Questions: [],
     DefendTheIndefensibles: []
   });
+
   //const { invoke, loading } = useHubMethod(connection, "newMessage");
 
   useEffect(() => {
@@ -87,21 +86,21 @@ const Home: NextPage = () => {
                   setShow(showUpdate);
                   setCurrentScreen(showUpdate.CurrentScreen);
                   //console.log(show.SelectedPanellistId);
-                  const matchingPanellist = show.Panellists.find(p => p.PanellistId == show.SelectedPanellistId); 
+                  const matchingPanellist = showUpdate.Panellists.find(p => p.PanellistId == showUpdate.SelectedPanellistId); 
                   console.log(matchingPanellist);
                   if (matchingPanellist != null) {
                     console.log("Panellist: " + matchingPanellist.Title);
                     setSelectedPanellist(matchingPanellist);
                   }
-                  //console.log(show.SelectedQuestionId);
-                  console.log(show.Questions);
-                  const matchingQuestion = show.Questions.find(q => q.QuestionId == show.SelectedQuestionId); 
+                  //console.log(showUpdate.SelectedQuestionId);
+                  console.log(showUpdate);
+                  const matchingQuestion = showUpdate.Questions.find(q => q.QuestionId == showUpdate.SelectedQuestionId); 
                   if (matchingQuestion != null) {
                     console.log("Selected question: " + SelectedQuestion.QuestionText);
                     setSelectedQuestion(matchingQuestion);
                   }
                   else {
-                    console.log("no question found for " + show.SelectedQuestionId);
+                    console.log("no question found for " + showUpdate.SelectedQuestionId);
                   }
                   setScoreUpdateEffect(true);
                 });
@@ -113,9 +112,18 @@ const Home: NextPage = () => {
               
               connection.on('updatedScore', (recipient, scoreChange) => {
                 console.log('Response: ' + recipient + ' ' + scoreChange + ' score change');
-                console.log('Received updated score with state as ' + connection.state);
-                updateSingleScore(recipient, scoreChange);
-                setScoreUpdateEffect(true);
+                //updateSingleScore(recipient, scoreChange);
+                //setScoreUpdateEffect(true);
+                if (scoreChange == 1) {
+                  setScoreUpEffect(true);
+                }
+                if (scoreChange == 3) {
+                  setScoreBigEffect(true);
+                }
+
+                if (scoreChange == -1) {
+                  setScoreDownEffect(true);
+                }
               
               });
 
@@ -140,94 +148,7 @@ const Home: NextPage = () => {
   loadShow();
 }, [connection]);
 
-/*
-  // onShowUpdate, onScreenChanged, onUpdatedScore)
-  useEffect(() => {
-    const handleShowUpdate = (showUpdate: Show) => {
-      //console.log('Show update received');
-      setShow(showUpdate);
-      setCurrentScreen(showUpdate.CurrentScreen);
-      //console.log(show.SelectedPanellistId);
-      const matchingPanellist = show.Panellists.find(p => p.PanellistId == show.SelectedPanellistId); 
-      if (matchingPanellist != null) {
-        setSelectedPanellist(matchingPanellist);
-      }
-      //console.log(show.SelectedQuestionId);
-      const matchingQuestion = show.Questions.find(q => q.QuestionId == show.SelectedQuestionId); 
-      if (matchingQuestion != null) {
-        setSelectedQuestion(matchingQuestion);
-      }
-      setScoreUpdateEffect(true);
-    };
 
-    const handleScreenChanged = (screenName: string) => {
-      console.log('Screen changed: ' + screenName);
-      setCurrentScreen(screenName);
-    };
-
-    const handleUpdatedScore = (recipient: string, scoreChange: number) => {
-      console.log('Response: ' + recipient + ' ' + scoreChange + ' score change');
-      updateSingleScore(recipient, scoreChange);
-      setScoreUpdateEffect(true);
-    };
-
-    srConnector.events(handleShowUpdate, handleScreenChanged,handleUpdatedScore);
-  });
-*/
-  /*
-  connection.on('showUpdate', (showUpdate) => {
-    //console.log('Show update received');
-    setShow(showUpdate);
-    setCurrentScreen(showUpdate.CurrentScreen);
-    //console.log(show.SelectedPanellistId);
-    const matchingPanellist = show.Panellists.find(p => p.PanellistId == show.SelectedPanellistId); 
-    if (matchingPanellist != null) {
-      setSelectedPanellist(matchingPanellist);
-    }
-    //console.log(show.SelectedQuestionId);
-    const matchingQuestion = show.Questions.find(q => q.QuestionId == show.SelectedQuestionId); 
-    if (matchingQuestion != null) {
-      setSelectedQuestion(matchingQuestion);
-    }
-    setScoreUpdateEffect(true);
-  });
-
-  connection.on('screenChanged', (screenName) => {
-    console.log('Screen changed: ' + screenName);
-    setCurrentScreen(screenName);
-  });
-
-connection.on('updatedScore', (recipient, scoreChange) => {
-  console.log('Response: ' + recipient + ' ' + scoreChange + ' score change');
-  console.log('Received updated score with state as ' + connection.state);
-  updateSingleScore(recipient, scoreChange);
-  setScoreUpdateEffect(true);
-
-});
-
-
-connection.onclose(async () => {
-  // await start();
-});
-
-
-async function start() {
-  try {
-    //if (!connected) {
-      console.log('Connecting');
-      await connection.start();
-      setConnected(true);
-      //console.log("SignalR connected");
-      
-      // console.log("message sent");
-    //}
-  }
-  catch(err) {
-    console.log("Humph, it failed: " + err);
-    setTimeout(start, 5000);
-  }
-}
-*/
 async function loadShow() {
   
     const res = await fetch(`${functionsURL}/api/getShow`, {
@@ -247,27 +168,9 @@ async function loadShow() {
     setLoaded(true);
 }
 
-async function sendMessage(message: string) {
-  try {
-    const body = { message: "Azure" };
-    const res = await fetch(`${functionsURL}/api/sendMessage`, {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-    let data = await res.text();
-    // console.log(data);
-  }
-  catch(err) {
-    console.log(err);
-  }
-}
-
 const sendScore = (recipient: string, scoreChange:number) => {
   try {
+    updateSingleScore(recipient, scoreChange);
     const body = { recipient: recipient, scoreChange: scoreChange };
     const res = fetch(`${functionsURL}/api/sendScore`, {
       method: "POST",
@@ -286,15 +189,19 @@ const sendScore = (recipient: string, scoreChange:number) => {
   }
 }
 
-async function updateSingleScore(recipient: string, scoreChange:number){
+const updateSingleScore = (recipient: string, scoreChange:number) => {
   try {
-    /*console.log("Initial panellists")
-    console.log(show.Panellists);
-    console.log(show);*/
+    setLastUpdated(new Date().toUTCString());
+    //console.log("Initial panellists")
+    //console.log(show.Panellists);
+    //console.log(show);
     const updatedPanellists = show.Panellists.map(p => p.Title == recipient ? { ...p, TotalScore: (p.TotalScore+scoreChange)} : p);
-    /*console.log("Updated panellists")
-    console.log(updatedPanellists);*/
+    console.log("Updated panellists");
+    console.log(selectedPanellist);
+    setSelectedPanellist({...selectedPanellist, TotalScore:selectedPanellist.TotalScore+scoreChange});
+    console.log(selectedPanellist);
     setShow({...show, Panellists:updatedPanellists});
+    //console.log(show);
     setScoreUpdateEffect(true);
   }
   catch(err) {
@@ -302,28 +209,6 @@ async function updateSingleScore(recipient: string, scoreChange:number){
   }
 }
 
-  const handleSubmit = (event: any) => {//React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    console.warn('setting message:' + event.target.name.value);
-    /* invoke("newMessage","here is the message").then(()=> {
-      console.log("something has happened: " + hubConnectionState);
-    }).catch(()=> {
-      console.log("something has failed");
-    });
-    if (!loading) {
-      console.log("Hmmm");
-    }*/
-
-    sendMessage("bla");
-    //loadShow();
-  };
-  const newMessage = () => {
-    console.log('a new message');
-  }
-
-  const inputChanged = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    event.preventDefault();
-  }
   //console.log(show.Panellists);
 
   return (
@@ -424,39 +309,37 @@ async function updateSingleScore(recipient: string, scoreChange:number){
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mt-10">
               <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-1 md:gap-x-8 md:gap-y-10">
-                <div className="relative" key={SelectedPanellist.Title}>
+                <div className="relative" key={selectedPanellist.Title}>
                   <dt>
                     <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                      <img src={SelectedPanellist.ImageUrl} alt={SelectedPanellist.Title}/>
+                      <img src={selectedPanellist.ImageUrl} alt={selectedPanellist.Title}/>
                     </div>
-                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">{SelectedPanellist.Title}</p>
+                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">{selectedPanellist.Title}</p>
                   </dt>
                   <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-4 md:gap-x-8 md:gap-y-16">
                     <div className="relative">  
                     </div>
                     <div className={`${scoreUpEffect && "animate-ping"} relative`} onClick={() => {
-                      sendScore(SelectedPanellist.Title,1);
+                      sendScore(selectedPanellist.Title,1);
                       setScoreUpEffect(true);
                     }} onAnimationEnd={() => setScoreUpEffect(false)}>  
                       <Icon iconName="CompletedSolid" />
                     </div>
                     <div className={`${scoreBigEffect && "animate-ping"} relative`} onClick={() => {
-                      sendScore(SelectedPanellist.Title,3);
+                      sendScore(selectedPanellist.Title,3);
                       setScoreBigEffect(true);
                     }} onAnimationEnd={() => setScoreBigEffect(false)}>  
                     <Icon iconName="HeartFill" />
                     </div>
                     <div className={`${scoreDownEffect && "animate-ping"} relative`} onClick={() => {
-                      sendScore(SelectedPanellist.Title,-1);
+                      sendScore(selectedPanellist.Title,-1);
                       setScoreDownEffect(true);
                     }} onAnimationEnd={() => setScoreDownEffect(false)}>
                       <Icon iconName="AlertSolid" />
                     </div>
                   </dl>
                   <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-1 md:gap-x-8 md:gap-y-16">
-                  <p className={`${scoreUpdateEffect && "animate-ping"} mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl`} onAnimationEnd={() => setScoreUpdateEffect(false)}>
-                    Score: {SelectedPanellist.TotalScore}
-                  </p>
+                  
                   </dl>
                 </div>
             </dl>
