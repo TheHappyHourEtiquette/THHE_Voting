@@ -339,11 +339,11 @@ async function updateSingleScore(recipient: string, scoreChange:number){
               Reset question
             </button>
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-10 rounded"
-              onClick={() => setTime("start",360000)}>
+              onClick={() => setTime("reset",360000)}>
               Reset summary
             </button>
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-10 rounded"
-              onClick={() => setTime("start",30000)}>
+              onClick={() => setTime("reset",30000)}>
               Reset DFI
             </button>
           </div>

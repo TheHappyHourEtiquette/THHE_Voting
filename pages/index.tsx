@@ -320,6 +320,9 @@ const updateSingleScore = (recipient: string, scoreChange:number) => {
               </dl>
             </div>
           </div>
+          <div>
+              <Timer time={time} />
+          </div>
         </div>
         }
 
@@ -366,62 +369,35 @@ const updateSingleScore = (recipient: string, scoreChange:number) => {
                     </div>
                     <p className="ml-16 text-lg leading-6 font-medium text-gray-900">{selectedPanellist.Title}</p>
                   </dt>
-                  <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-4 md:gap-x-8 md:gap-y-16">
-                    <div className="relative">  
-                    </div>
+                  </div>
+                  <div>
+                  <dt className="space-y-12 md:space-y-0 md:grid md:grid-cols-4 md:gap-x-8 md:gap-y-16 place-items-center">
                     <div className={`${scoreUpEffect && "animate-ping"} relative`} onClick={() => {
                       sendScore(selectedPanellist.Title,1);
                       setScoreUpEffect(true);
                     }} onAnimationEnd={() => setScoreUpEffect(false)}>  
-                      <Icon iconName="CompletedSolid" />
+                      <Icon iconName="CompletedSolid" className="iconClickable" />
                     </div>
                     <div className={`${scoreBigEffect && "animate-ping"} relative`} onClick={() => {
                       sendScore(selectedPanellist.Title,3);
                       setScoreBigEffect(true);
                     }} onAnimationEnd={() => setScoreBigEffect(false)}>  
-                    <Icon iconName="HeartFill" />
+                    <Icon iconName="HeartFill" className="iconClickable"/>
                     </div>
                     <div className={`${scoreDownEffect && "animate-ping"} relative`} onClick={() => {
                       sendScore(selectedPanellist.Title,-1);
                       setScoreDownEffect(true);
                     }} onAnimationEnd={() => setScoreDownEffect(false)}>
-                      <Icon iconName="AlertSolid" />
+                      <Icon iconName="AlertSolid" className="iconClickable"/>
                     </div>
-                  </dl>
-                  <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-1 md:gap-x-8 md:gap-y-16">
-                  </dl>
+                  </dt>
                 </div>
             </dl>
             </div>
           </div>
           <div>
               <Timer time={time} />
-              <div onClick={() => {
-                      setIsActive(true);
-                      setIsPaused(false);
-                    }}>
-                      Start
-                    </div>
-                    <div onClick={() => {
-                      setIsActive(true);
-                      setIsPaused(true);
-                    }}>
-                      Pause
-                    </div>
-                    <div onClick={() => {
-                      setIsActive(false);
-                      setIsPaused(false);
-                    }}>
-                      Stop
-                    </div>
-                    <div onClick={() => {
-                      setIsActive(false);
-                      setIsPaused(false);
-                      setTime(180000);
-                    }}>
-                      Reset
-                    </div>
-            </div>
+          </div>
         </div>
         }
       </main>
