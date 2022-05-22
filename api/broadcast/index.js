@@ -40,7 +40,7 @@ module.exports = function (context) {
       ],
     },
   ];
-
+  console.log(show);
   context.done();
   }
   catch(exp) {

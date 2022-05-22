@@ -25,6 +25,7 @@ const Thhe: NextPage = () => {
   const [scoreDownEffect, setScoreDownEffect] = useState(false);
   const [scoreUpdateEffect, setScoreUpdateEffect] = useState(false);
   const [connection, setConnection] = useState<signalR.HubConnection>();
+  const [SelectedQuestion, setSelectedQuestion] = useState<string>(0);
   
   const [show, setShow] = useState<Show>({
     id: "",
@@ -99,6 +100,7 @@ async function loadShow() {
       return data
     });
     setShow(data);
+    setSelectedQuestion(data.SelectedQuestionId.toString());
     setLoaded(true);
   }
 }
@@ -145,6 +147,7 @@ const sendScreenChange = (screenName: string) => {
 const sendQuestionChange = (questionId: string) => {
   try {
     const body = { questionId: questionId};
+    setSelectedQuestion(questionId);
     const res = fetch(`${functionsURL}/api/changeQuestion`, {
       method: "POST",
       mode: "cors",
@@ -265,6 +268,11 @@ async function updateSingleScore(recipient: string, scoreChange:number){
 
         <div className="py-12 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:text-center" key="SelectedQuestion">
+              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                Selected - {SelectedQuestion}
+              </p>
+            </div>
           {
             show.Questions.map((question: any) => {
               return (  

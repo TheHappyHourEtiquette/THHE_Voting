@@ -94,10 +94,14 @@ const Home: NextPage = () => {
                     setSelectedPanellist(matchingPanellist);
                   }
                   //console.log(show.SelectedQuestionId);
+                  console.log(show.Questions);
                   const matchingQuestion = show.Questions.find(q => q.QuestionId == show.SelectedQuestionId); 
                   if (matchingQuestion != null) {
                     console.log("Selected question: " + SelectedQuestion.QuestionText);
                     setSelectedQuestion(matchingQuestion);
+                  }
+                  else {
+                    console.log("no question found for " + show.SelectedQuestionId);
                   }
                   setScoreUpdateEffect(true);
                 });
