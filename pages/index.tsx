@@ -86,7 +86,7 @@ const Home: NextPage = () => {
                   setShow(showUpdate);
                   setCurrentScreen(showUpdate.CurrentScreen);
                   //console.log(show.SelectedPanellistId);
-                  const matchingPanellist = showUpdate.Panellists.find(p => p.PanellistId == showUpdate.SelectedPanellistId); 
+                  const matchingPanellist = showUpdate.Panellists.find((p: Panellist) => p.PanellistId == showUpdate.SelectedPanellistId); 
                   console.log(matchingPanellist);
                   if (matchingPanellist != null) {
                     console.log("Panellist: " + matchingPanellist.Title);
@@ -94,7 +94,7 @@ const Home: NextPage = () => {
                   }
                   //console.log(showUpdate.SelectedQuestionId);
                   console.log(showUpdate);
-                  const matchingQuestion = showUpdate.Questions.find(q => q.QuestionId == showUpdate.SelectedQuestionId); 
+                  const matchingQuestion = showUpdate.Questions.find((q: Question) => q.QuestionId == showUpdate.SelectedQuestionId); 
                   if (matchingQuestion != null) {
                     console.log("Selected question: " + SelectedQuestion.QuestionText);
                     setSelectedQuestion(matchingQuestion);
