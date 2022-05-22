@@ -166,6 +166,27 @@ const sendQuestionChange = (questionId: number) => {
   }
 }
 
+const sendDFIChange = (questionId: number) => {
+  try {
+    const body = { questionId: questionId};
+    setSelectedQuestion(questionId);
+    const res = fetch(`${functionsURL}/api/changeDFI`, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }).then((res)=>{
+      let data = res.text();
+      // console.log(data);
+    });
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
+
 const sendPanellistChange = (panellistId: string) => {
   try {
     const body = { panellistId: panellistId};
@@ -298,6 +319,30 @@ async function updateSingleScore(recipient: string, scoreChange:number){
             show.Questions.map((question: any) => {
               return (  
                 <div className="lg:text-center" key={question.QuestionId} onClick={() => sendQuestionChange(question.QuestionId)}>
+                  <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                  <Icon iconName="Send" />  {question.QuestionId} - {question.QuestionText}?
+                  </p>
+                </div>
+            )})
+          }
+          </div>
+        </div>
+
+        <h2 className="text-4xl font-bold">
+          Defend the indefensible
+        </h2>
+
+        <div className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:text-center" key="SelectedQuestion">
+              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                Selected - {SelectedQuestion}
+              </p>
+            </div>
+          {
+            show.DefendTheIndefensibles.map((question: any) => {
+              return (  
+                <div className="lg:text-center" key={question.QuestionId} onClick={() => sendDFIChange(question.QuestionId)}>
                   <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
                   <Icon iconName="Send" />  {question.QuestionId} - {question.QuestionText}?
                   </p>

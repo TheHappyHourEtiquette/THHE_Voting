@@ -48,6 +48,13 @@ const Home: NextPage = () => {
     "QuestionOrder":1,
     "Scores": []
   });
+
+  const [SelectedDFI, setSelectedDFI] = useState<DefendTheIndefensible>({
+    "QuestionId":0,
+    "QuestionText": "",
+    "QuestionOrder":1,
+    "Scores": []
+  });
   
   const [show, setShow] = useState<Show>({
     id: "",
@@ -68,10 +75,6 @@ const Home: NextPage = () => {
     DefendTheIndefensibles: []
   });
 
-  const id:any = useRef(null);
-  const clear=()=>{
-    window.clearInterval(id.current);
-  }
 
   //const { invoke, loading } = useHubMethod(connection, "newMessage");
 
@@ -150,6 +153,14 @@ const Home: NextPage = () => {
                 const matchingQuestion = show.Questions.find(q => q.QuestionId == questionId); 
                   if (matchingQuestion != null) {
                     setSelectedQuestion(matchingQuestion);
+                  }
+                  setScoreUpdateEffect(true);
+              });
+
+              connection.on('dfiChanged', (questionId) => {
+                const matchingDFI = show.DefendTheIndefensibles.find(q => q.QuestionId == questionId); 
+                  if (matchingDFI != null) {
+                    setSelectedQuestion(matchingDFI);
                   }
                   setScoreUpdateEffect(true);
               });
@@ -295,7 +306,7 @@ const updateSingleScore = (recipient: string, scoreChange:number) => {
         </div>
         }
 
-        {(currentScreen == 'Questions - voting' || currentScreen == 'Questions - summary') &&
+        {(currentScreen == 'Questions - voting' || currentScreen == 'Questions - summary' || currentScreen == 'Defend the indefensible') &&
         <div className="py-5 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:text-center">
@@ -400,6 +411,7 @@ const updateSingleScore = (recipient: string, scoreChange:number) => {
           </div>
         </div>
         }
+
       </main>
 
       <footer className="flex h-24 w-full items-center justify-center border-t">
