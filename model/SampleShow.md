@@ -44,19 +44,19 @@ Here is some sample data
     "Questions": [
         {
             "QuestionId": 1,
-            "QuestionText": "Which tip did you get from someone must recently do this ever since",
+            "QuestionText": "Which tip did you get from someone must recently do ever since you heard it?",
             "QuestionOrder": 1,
             "Scores": []
         },
         {
             "QuestionId": 2,
-            "QuestionText": "Which core ideas /beliefs do we need to manifest in corporate culture to foster good M365 etiquette",
+            "QuestionText": "Which core idea/belief are needed to stop corporate BS and foster better M365 etiquette?",
             "QuestionOrder": 2,
             "Scores": []
         },
         {
             "QuestionId": 3,
-            "QuestionText": "What is a often given, but in your opinion overrated advice when it comes to good M365 etiquette",
+            "QuestionText": "What is a often given, but in your opinion overrated advice when it comes to good M365 etiquette?",
             "QuestionOrder": 3,
             "Scores": []
         }
